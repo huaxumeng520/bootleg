@@ -4,7 +4,7 @@ Bootleg is a hackable game console made for indie devs and homebrewers.
 
 ## How it's built and what it supports
 
-* Designed for Xbox One controllers, however everything that exposes itself to /dev/input is supported
+* Designed for Xbox One controllers, however everything that exposes itself to evdev is supported
   * xpadneo could potentially give us controller batterylevels, forcefeedback etc https://github.com/atar-axis/xpadneo/
 * Designed for Raspberry Pi 4b 8GB
   * Great cooling and OC/overvolt is required (>=2.0GHz)
