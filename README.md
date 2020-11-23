@@ -13,7 +13,7 @@ Bootleg is a hackable game console made for indie devs and homebrewers.
   * All official titles will use this as a target specification.
 * Additionally supports any x86_64 system with dedicated NVidia/AMD graphics
 * Built on Linux Manjaro (without a preinstalled xorg/X11 stack)
-* Custom Wayland compositor/shell using Canonical Mir: BootlegCompositor*
+* Custom Wayland compositor/shell using the Mir Abstraction Layer: BootlegCompositor*
 * Custom Dashboard application, just like on Xbox and Playstation: BootlegDashboard
 * Customized KIT/Odin/WIR technology stack that powers native games as well as the dashboard and overlays:
   * Efficient and powerful Vulkan-powered rendering everywhere
