@@ -1,6 +1,6 @@
 # bootleg
 
-Bootleg is a hackable game console
+Bootleg is a hackable game console made for indie devs and homebrewers.
 
 ## How it's built and what it supports
 
@@ -36,3 +36,9 @@ Bootleg is a hackable game console
 - [ ] Implement Dashboard and get it to MVP-status
 - [ ] Implement the glue between Dashboard, Compositor and native games (KIT/Odin/WIR)
 - [ ] Start thinking about creating a case and physical product design
+
+### Current design prototype:
+
+![Splash](https://haikatekk.se/BootlegDashboardSplash.png)
+![3.0](https://haikatekk.se/BootlegDashboard3.0.png)
+
