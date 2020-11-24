@@ -8,7 +8,7 @@ Bootleg is a hackable game console made for indie devs and homebrewers.
   * xpadneo could potentially give us controller batterylevels, forcefeedback etc https://github.com/atar-axis/xpadneo/
 * Designed for Raspberry Pi 4b 8GB
   * Great cooling and OC/overvolt is required (>=2.0GHz)
-  * M.2/Sata SSD over USB3.0 as boot device is required
+  * Sata SSD over USB3.0 as boot device is required
   * Minimum goal is for native games to run at 1080p30 or 720p60
   * All official titles will use this as a target specification.
 * Additionally supports any x86_64 system with dedicated NVidia/AMD graphics
@@ -21,6 +21,7 @@ Bootleg is a hackable game console made for indie devs and homebrewers.
  * Potentially integrated emulator support out of the box; NES, SNES, N64, PSX, PS2, GC, PSP, Switch?
    * Requires extra steps for the user to install system files.
    * This is a very low-priority feature, however it is a big want
+ * Integrated Steam Link, if possible. Pretty low priority, but if easy then just do it.
 
 ## Wanted changes:
 
