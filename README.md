@@ -36,7 +36,7 @@ Bootleg is a hackable game console made for indie devs and homebrewers.
 - [ ] Port the KIT/Odin/WIR stack to ARM and make sure everything works
 - [ ] Implement Dashboard and get it to MVP-status
 - [ ] Implement the glue between Dashboard, Compositor and native games (KIT/Odin/WIR)
-- [ ] Start thinking about creating a case and physical product design
+- [X] Start thinking about creating a case and physical product design
 
 ### Current design prototype:
 ![Design](https://haikatekk.se/design.png)
