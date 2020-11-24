@@ -39,7 +39,7 @@ Bootleg is a hackable game console made for indie devs and homebrewers.
 - [X] Start thinking about creating a case and physical product design
 
 ### Current design prototype: 
-![Design](https://haikatekk.se/design.png)
+![Design](https://haikatekk.se/design2.png)
 ![Splash](https://haikatekk.se/BootlegDashboardSplash.png)
 ![3.0](https://haikatekk.se/BootlegDashboard3.0.png)
 
