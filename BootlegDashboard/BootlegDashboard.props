@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros">
+    <KITEngine>$(ProjectDir)..\..\KIT.Engine\</KITEngine>
+    <WIRFramework>$(ProjectDir)..\..\WIR.Framework\</WIRFramework>
+    <WIROutputDir>$(ProjectDir)..\..\Workspace\Output\</WIROutputDir>
+    <KITModulesDir>$(WIROutputDir)\bin\$(Configuration)\Modules\</KITModulesDir>
+    <VulkanSDK>$(VULKAN_SDK)</VulkanSDK>
+    <Odin>$(ProjectDir)..\..\Odin\</Odin>
+  </PropertyGroup>
+  <PropertyGroup />
+  <ItemDefinitionGroup />
+  <ItemGroup>
+    <BuildMacro Include="KITEngine">
+      <Value>$(KITEngine)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="WIRFramework">
+      <Value>$(WIRFramework)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="WIROutputDir">
+      <Value>$(WIROutputDir)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="KITModulesDir">
+      <Value>$(KITModulesDir)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="VulkanSDK">
+      <Value>$(VulkanSDK)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="Odin">
+      <Value>$(Odin)</Value>
+    </BuildMacro>
+  </ItemGroup>
+</Project>
