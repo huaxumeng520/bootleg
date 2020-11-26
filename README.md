@@ -13,7 +13,8 @@ Bootleg is a hackable game console made for indie devs and homebrewers.
   * All official titles will use this as a target specification.
 * Additionally supports any x86_64 system with dedicated NVidia/AMD graphics
 * Built on Linux Manjaro (without a preinstalled xorg/X11 stack)
-* Custom Wayland compositor/shell using the Mir Abstraction Layer: BootlegCompositor*
+* ~~Custom Wayland compositor/shell using the Mir Abstraction Layer: BootlegCompositor~~
+* Renders directly to a display surface, completely bypassing any windowing system
 * Custom Dashboard application, just like on Xbox and Playstation: BootlegDashboard
 * Customized KIT/Odin/WIR technology stack that powers native games as well as the dashboard and overlays:
   * Efficient and powerful Vulkan-powered rendering everywhere
@@ -25,8 +26,8 @@ Bootleg is a hackable game console made for indie devs and homebrewers.
 
 ## Wanted changes:
 
-* Once/if mesa gets VK_KHR_display_swapchain support for their v3dv driver (they already seem to have VK_KHR_display), we can completely remove the custom Wayland compositor and present/render directly to the monitor output via DRM, which should give us a lot of performance benefits as we could completely skip the overhead of a Wayland server and clients.
-* This would remove any support for external/thirdparty applications like emulators though, unless we port them?
+* ~~Once/if mesa gets VK_KHR_display_swapchain support for their v3dv driver (they already seem to have VK_KHR_display), we can completely remove the custom Wayland compositor and present/render directly to the monitor output via DRM, which should give us a lot of performance benefits as we could completely skip the overhead of a Wayland server and clients.~~
+* Apparently, we only need the `VK_KHR_display` to create a display surface using `vkCreateDisplayPlaneSurfaceKHR`. This is excellent news and the compositor can probably be thrown out the window!
 
 ## Where we actually are now
 
