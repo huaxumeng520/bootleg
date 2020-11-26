@@ -42,3 +42,6 @@
 .kdev4/
 
 # End of https://www.toptal.com/developers/gitignore/api/c++,kdevelop4
+
+staging
+staging-debug
