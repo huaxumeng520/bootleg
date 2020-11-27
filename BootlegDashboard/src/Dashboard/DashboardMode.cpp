@@ -60,8 +60,8 @@ void bootleg::DashboardMode::onModeActivated()
   m_playerState->getButtonEvent("Select") += wir::MemberFunction(this, &bootleg::DashboardMode::handleSelect);
   m_playerState->getButtonEvent("Back") += wir::MemberFunction(this, &bootleg::DashboardMode::handleBack);
 
-
-
+  m_backgroundNormal = assetManager()->loadSync<kit::Texture>("Content/Wallpaper/WallpaperDefault_Normal.asset");
+  m_backgroundBlurred = assetManager()->loadSync<kit::Texture>("Content/Wallpaper/WallpaperDefault_Blurred.asset");
 }
 
 void bootleg::DashboardMode::onModeDeactivated()
@@ -69,23 +69,23 @@ void bootleg::DashboardMode::onModeDeactivated()
   
 }
 
-void bootleg::DashboardMode::onWorldLoading()
-{
-}
 
-void bootleg::DashboardMode::onWorldStart()
-{
- 
-}
-
-void bootleg::DashboardMode::onWorldTick(double seconds)
+void bootleg::DashboardMode::update(double seconds)
 {
   
+  if (engine()->seconds() > 5.0f && m_backgroundAlpha > 0.0f)
+  {
+    m_backgroundAlpha -= seconds * 4.0f;
+  }
 
-}
+  auto r = renderManager();
 
-void bootleg::DashboardMode::onWorldDestroyed()
-{
+  if (m_backgroundAlpha < 1.0f)
+    r->sprite(glm::vec2(0.0f, 0.0f), glm::vec2(1920.f, 1080.f), m_backgroundBlurred, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+
+  if (m_backgroundAlpha > 0.0f)
+    r->sprite(glm::vec2(0.0f, 0.0f), glm::vec2(1920.f, 1080.f), m_backgroundNormal, glm::vec4(1.0f, 1.0f, 1.0f, m_backgroundAlpha));
+
 }
 
 void bootleg::DashboardMode::handleNavigateHorizontal(float delta)
@@ -111,3 +111,4 @@ void bootleg::DashboardMode::handleSelect()
 void bootleg::DashboardMode::handleBack()
 {
 }
+

@@ -5,6 +5,8 @@
 #include <KIT/Game/PlayerState.hpp>
 #include <KIT/Rendering/TextRenderer.hpp>
 
+#include <KIT/Assets/Texture.hpp>
+
 #include <Dashboard/Export.hpp>
 
 namespace bootleg
@@ -20,10 +22,7 @@ namespace bootleg
     virtual void onModeActivated() override;
     virtual void onModeDeactivated() override;
 
-    virtual void onWorldLoading() override;
-    virtual void onWorldStart() override;
-    virtual void onWorldTick(double seconds) override;
-    virtual void onWorldDestroyed() override;
+    virtual void update(double seconds) override;
 
   protected:
 
@@ -35,5 +34,10 @@ namespace bootleg
     void handleBack();
 
     kit::PlayerState *m_playerState = nullptr;
+
+
+    kit::TexturePtr m_backgroundNormal;
+    kit::TexturePtr m_backgroundBlurred;
+    float m_backgroundAlpha = 1.0f;
   };
 }
