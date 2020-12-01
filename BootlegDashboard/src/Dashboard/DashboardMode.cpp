@@ -1,5 +1,10 @@
 
 #include "Dashboard/DashboardMode.hpp"
+#include "Dashboard/GameRepository.hpp"
+
+#include "Dashboard/UI/UIBox.hpp"
+#include "Dashboard/UI/UIMask.hpp"
+#include "Dashboard/UI/UIBanner.hpp"
 
 #include <KIT/Engine.hpp>
 
@@ -22,6 +27,10 @@
 
 #include <WIR/String.hpp>
 
+#include <chrono>
+#include <ctime>    
+
+
 bootleg::DashboardMode::DashboardMode(wir::DynamicArguments const &args)
     : kit::GameMode(args)
 {
@@ -38,15 +47,25 @@ bootleg::DashboardMode::~DashboardMode()
 
 void bootleg::DashboardMode::onModeActivated()
 {
-  m_playerState = engine()->gameManager()->playerState(0);
-   
+  m_repository = new Repository(this);
+
+  m_playerState = gameManager()->playerState(0);
+
+  inputManager()->onDiscoveredDevice() += [=](auto dev) {
+    dev->assign(m_playerState);
+  };
+
   // Bind inputs to events
   m_playerState->bindAxis("NavigateHorizontal", "gamepad_analog_x", wir::AT_Normal);
   m_playerState->bindAxis("NavigateVertical", "gamepad_analog_y", wir::AT_Normal);
-  m_playerState->bindButton("NavigateHorizontal", "gamepad_dpad_right", wir::BT_AsAxisPositive);
-  m_playerState->bindButton("NavigateVertical", "gamepad_dpad_down", wir::BT_AsAxisPositive);
-  m_playerState->bindButton("NavigateHorizontal", "gamepad_dpad_left", wir::BT_AsAxisNegative);
-  m_playerState->bindButton("NavigateVertical", "gamepad_dpad_up", wir::BT_AsAxisNegative);
+  m_playerState->bindButton("NavigateRight", "gamepad_dpad_right", wir::BT_Down);
+  m_playerState->bindButton("NavigateDown", "gamepad_dpad_down", wir::BT_Down);
+  m_playerState->bindButton("NavigateLeft", "gamepad_dpad_left", wir::BT_Down);
+  m_playerState->bindButton("NavigateUp", "gamepad_dpad_up", wir::BT_Down);
+  m_playerState->bindButton("NavigateRight", "right", wir::BT_Down);
+  m_playerState->bindButton("NavigateDown", "down", wir::BT_Down);
+  m_playerState->bindButton("NavigateLeft", "left", wir::BT_Down);
+  m_playerState->bindButton("NavigateUp", "up", wir::BT_Down);
   m_playerState->bindButton("NextView", "gamepad_shoulder_right", wir::BT_Down);
   m_playerState->bindButton("PreviousView", "gamepad_shoulder_left", wir::BT_Down);
   m_playerState->bindButton("Select", "gamepad_a", wir::BT_AsAxisPositive);
@@ -55,45 +74,214 @@ void bootleg::DashboardMode::onModeActivated()
   // Bind events to functions
   m_playerState->getAxisEvent("NavigateHorizontal") += wir::MemberFunction(this, &bootleg::DashboardMode::handleNavigateHorizontal);
   m_playerState->getAxisEvent("NavigateVertical") += wir::MemberFunction(this, &bootleg::DashboardMode::handleNavigateVertical);
+
+  m_playerState->getButtonEvent("NavigateDown") += wir::MemberFunction(this, &bootleg::DashboardMode::handleNavigateDown);
+  m_playerState->getButtonEvent("NavigateLeft") += wir::MemberFunction(this, &bootleg::DashboardMode::handleNavigateLeft);
+  m_playerState->getButtonEvent("NavigateRight") += wir::MemberFunction(this, &bootleg::DashboardMode::handleNavigateRight);
+  m_playerState->getButtonEvent("NavigateUp") += wir::MemberFunction(this, &bootleg::DashboardMode::handleNavigateUp);
+
   m_playerState->getButtonEvent("NextView") += wir::MemberFunction(this, &bootleg::DashboardMode::handleNextView);
   m_playerState->getButtonEvent("PreviousView") += wir::MemberFunction(this, &bootleg::DashboardMode::handlePreviousView);
   m_playerState->getButtonEvent("Select") += wir::MemberFunction(this, &bootleg::DashboardMode::handleSelect);
   m_playerState->getButtonEvent("Back") += wir::MemberFunction(this, &bootleg::DashboardMode::handleBack);
 
-  m_backgroundNormal = assetManager()->loadSync<kit::Texture>("Content/Wallpaper/WallpaperDefault_Normal.asset");
-  m_backgroundBlurred = assetManager()->loadSync<kit::Texture>("Content/Wallpaper/WallpaperDefault_Blurred.asset");
+  m_backgroundNormal = assetManager()->loadSync<kit::Texture>("Content/Wallpaper/RuvimMiksanskiy_Winter_Normal.asset");
+  m_backgroundBlurred = assetManager()->loadSync<kit::Texture>("Content/Wallpaper/RuvimMiksanskiy_Winter_Blurred.asset");
+
+  m_bannerMask = new UIMask(engine(),
+    {0.0f, 0.0f}, {1920.f, 1080.f},
+    assetManager()->loadSync<kit::Texture>("Content/Masks/GamesOverviewMask.asset") );
+   
+  for (uint32_t i = 0; i < m_dummyBanners.size(); i++)
+  {
+    m_dummyBanners[i] = new UIBanner(engine(), 
+      assetManager()->loadSync<kit::Texture>(wir::format("Content/Banners/DummyBanner%u.asset", i + 1))
+      , m_bannerMask);
+    m_dummyBanners[i]->mode(i < 4 ? BM_ActiveRow : BM_InactiveRow);
+  }
+  
+  auto clockFont = assetManager()->loadSync<kit::Font>("Content/Fonts/TitilliumWeb-ExtraLight.asset");
+  m_clock = new kit::Text(clockFont, 36.0f, U"00:00");
+  m_clock->alignment(kit::TA_TopRight);
+  m_clock->color({1.f, 1.f, 1.f, 0.7f});
+  m_clock->position({1920.f - 64.0f, 48.f});
+  
+
+  auto headerFont = assetManager()->loadSync<kit::Font>("Content/Fonts/TitilliumWeb-Regular.asset");
+  m_groupMostPlayed = new kit::Text(headerFont, 72.0f, U"Most played");
+  m_groupMostPlayed->position({120.f, 240.f});
+
+  m_groupNintendoSwitch = new kit::Text(headerFont, 48.0f, U"Nintendo Switch");
+  m_groupNintendoSwitch->position({120.f, 752.f});
+  m_groupNintendoSwitch->color({1.0f, 1.0f, 1.0f, 0.65f});
+
+  auto menuFont = assetManager()->loadSync<kit::Font>("Content/Fonts/TitilliumWeb-ExtraLight.asset");
+  m_menuGames = new kit::Text(menuFont, 48.0f, U"Games");
+  m_menuGames->position({112.f, 96.f});
+
+  m_menuStore = new kit::Text(menuFont, 48.0f, U"Store");
+  m_menuStore->color({1.0f, 1.0f, 1.0f, 0.25f});
+  m_menuStore->position({328.f, 96.f});
+
+  m_menuDownloads = new kit::Text(menuFont, 48.0f, U"Downloads");
+  m_menuDownloads->color({1.0f, 1.0f, 1.0f, 0.25f});
+  m_menuDownloads->position({512.f, 96.f});
+
+  m_menuSettings = new kit::Text(menuFont, 48.0f, U"Settings");
+  m_menuSettings->color({1.0f, 1.0f, 1.0f, 0.25f});
+  m_menuSettings->position({800.f, 96.f});
 }
 
 void bootleg::DashboardMode::onModeDeactivated()
 {
-  
+  delete m_bannerMask;
+  for (uint32_t i = 0; i < m_dummyBanners.size(); i++)
+  {
+    delete m_dummyBanners[i];
+  }
+
+  delete m_menuGames;
+  delete m_menuStore;
+  delete m_menuDownloads;
+  delete m_menuSettings;
+
+  delete m_groupMostPlayed;
+  delete m_groupNintendoSwitch;
+
+  delete m_clock;
+
+  delete m_repository;
 }
 
 
+
+void renderBannerSelected(kit::TexturePtr texture, glm::vec2 position)
+{
+}
+
+void renderBannerActiveRow(kit::TexturePtr texture, glm::vec2 position)
+{
+
+}
+
+void renderBannerInactiveRow(kit::TexturePtr texture, glm::vec2 position)
+{
+
+}
+
+void renderActiveRow(glm::vec2 position, uint32_t activeIndex)
+{
+
+}
+
+void renderActiveRow(glm::vec2 position)
+{
+}
+
 void bootleg::DashboardMode::update(double seconds)
 {
-  
-  if (engine()->seconds() > 5.0f && m_backgroundAlpha > 0.0f)
-  {
-    m_backgroundAlpha -= seconds * 4.0f;
-  }
+  updateBackground(seconds);
+
+  char str[26];
+  auto time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+  ctime_s(str, sizeof str, &time);
+
+  m_clock->text(wir::utf8to32(wir::substring(str, 11, 5)));
+
+  m_clock->render();
+
+  m_menuGames->render();
+  m_menuStore->render();
+  m_menuDownloads->render();
+  m_menuSettings->render();
+
+  m_groupMostPlayed->render();
+  m_groupNintendoSwitch->render();
 
   auto r = renderManager();
 
-  if (m_backgroundAlpha < 1.0f)
-    r->sprite(glm::vec2(0.0f, 0.0f), glm::vec2(1920.f, 1080.f), m_backgroundBlurred, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+  float x = 272.0f;
+  float y = 496.0f;
 
-  if (m_backgroundAlpha > 0.0f)
-    r->sprite(glm::vec2(0.0f, 0.0f), glm::vec2(1920.f, 1080.f), m_backgroundNormal, glm::vec4(1.0f, 1.0f, 1.0f, m_backgroundAlpha));
+  UIBanner *selected = nullptr;
+  glm::vec2 selectedPos;
+  for (int i = 0; i < m_dummyBanners.size(); i++)
+  {
+    m_dummyBanners[i]->update(seconds);
+    if (m_dummyBanners[i]->mode() != BM_Selected)
+      m_dummyBanners[i]->render({x, y});
+    else
+    {
+      selectedPos = {x, y};
+      selected = m_dummyBanners[i];
+    }
 
+    x += 352.f;
+    if (i == 3)
+    {
+      y += 192.f + 256.0f;
+      x = 272.0f;
+    }
+  }
+
+  if (selected)
+    selected->render(selectedPos);
 }
 
 void bootleg::DashboardMode::handleNavigateHorizontal(float delta)
 {
+  static std::deque<float> lastValues;
+  
+  bool still = true;
+  for (auto val : lastValues)
+  {
+    if (glm::abs(val) > 0.0f)
+    {
+      still = false;
+      break;
+    }
+  }
+
+
+  lastValues.push_back(delta);
+
+  if (lastValues.size() > 3)
+    lastValues.pop_front();
+
+
+
+  if (delta > 0.0f)
+  {
+    m_backgroundAlphaTarget = 1.0f;
+  }
+  else if (delta < 0.0f)
+  {
+    m_backgroundAlphaTarget = 0.0f;
+  }
 }
 
 void bootleg::DashboardMode::handleNavigateVertical(float delta)
 {
+}
+
+void bootleg::DashboardMode::handleNavigateDown()
+{
+  m_dummyBanners[2]->mode(BM_Selected);
+  m_dummyBanners[1]->mode(BM_ActiveRow);
+}
+
+void bootleg::DashboardMode::handleNavigateLeft()
+{
+}
+
+void bootleg::DashboardMode::handleNavigateRight()
+{
+}
+
+void bootleg::DashboardMode::handleNavigateUp()
+{
+  m_dummyBanners[2]->mode(BM_ActiveRow);
+  m_dummyBanners[1]->mode(BM_Selected);
 }
 
 void bootleg::DashboardMode::handleNextView()
@@ -111,4 +299,36 @@ void bootleg::DashboardMode::handleSelect()
 void bootleg::DashboardMode::handleBack()
 {
 }
+
+void bootleg::DashboardMode::updateBackground(double seconds)
+{
+  if (glm::abs(m_backgroundAlpha - m_backgroundAlphaTarget) < 0.01f)
+  {
+    m_backgroundAlpha = m_backgroundAlphaTarget;
+  }
+  else if (m_backgroundAlpha < m_backgroundAlphaTarget)
+  {
+    float magnitude = glm::clamp(float(seconds) / m_backgroundAlphaSpeed, 0.0f, m_backgroundAlphaTarget - m_backgroundAlpha);
+
+    m_backgroundAlpha += magnitude;
+  }
+  else if (m_backgroundAlpha > m_backgroundAlphaTarget)
+  {
+    float magnitude = glm::clamp(float(seconds) / m_backgroundAlphaSpeed, 0.0f, m_backgroundAlpha - m_backgroundAlphaTarget);
+
+    m_backgroundAlpha -= magnitude;
+  }
+
+
+  auto r = renderManager();
+
+  if (m_backgroundAlpha < 1.0f)
+    r->sprite(glm::vec2(0.0f, 0.0f), glm::vec2(1920.f, 1080.f), m_backgroundBlurred, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+
+  if (m_backgroundAlpha > 0.0f)
+    r->sprite(glm::vec2(0.0f, 0.0f), glm::vec2(1920.f, 1080.f), m_backgroundNormal, glm::vec4(1.0f, 1.0f, 1.0f, m_backgroundAlpha));
+
+  r->sprite({0.0f, 0.0f}, {1920.f, 1080.f}, m_backgroundDarken);
+}
+
 

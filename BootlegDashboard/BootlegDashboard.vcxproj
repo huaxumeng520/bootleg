@@ -115,17 +115,31 @@ $(WIROutputDir)\bin\Release\WIR.StaticCodeGenerator.exe --inputPath=$(ProjectDir
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\Dashboard\Models\Game.hpp" />
     <ClInclude Include="include\Dashboard\Export.hpp" />
+    <ClInclude Include="include\Dashboard\Models\Group.hpp" />
     <ClInclude Include="include\Dashboard\Module.hpp" />
     <ClInclude Include="include\Dashboard\DashboardMode.hpp" />
+    <ClInclude Include="include\Dashboard\GameRepository.hpp" />
+    <ClInclude Include="include\Dashboard\UI\UIBanner.hpp" />
+    <ClInclude Include="include\Dashboard\UI\UIBannerRow.hpp" />
+    <ClInclude Include="include\Dashboard\UI\UIBox.hpp" />
+    <ClInclude Include="include\Dashboard\UI\UIMask.hpp" />
+    <ClInclude Include="include\Dashboard\UI\UIOrigin.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="generated\Dashboard\Export.generated.cpp" />
     <ClCompile Include="generated\Dashboard\Module.generated.cpp" />
     <ClCompile Include="generated\Dashboard\DashboardMode.generated.cpp" />
+    <ClCompile Include="src\Dashboard\GameRepository.cpp" />
+    <ClCompile Include="src\Dashboard\Models\Game.cpp" />
+    <ClCompile Include="src\Dashboard\UI\UIBanner.cpp" />
+    <ClCompile Include="src\Dashboard\UI\UIOrigin.cpp" />
     <ClCompile Include="src\Dashboard\Main.cpp" />
     <ClCompile Include="src\Dashboard\Module.cpp" />
     <ClCompile Include="src\Dashboard\DashboardMode.cpp" />
+    <ClCompile Include="src\Dashboard\UI\UIBox.cpp" />
+    <ClCompile Include="src\Dashboard\UI\UIMask.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="BootlegDashboard.props" />
