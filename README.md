@@ -54,7 +54,7 @@ Bootleg is a hackable game console made for indie devs and homebrewers.
 28c idle (and running OpenArena)
 36c heavy CPU load
 
-vkQuake3 on X11:
+vkQuake3 (High settings) on X11:
 800x480 250fps+
 1280x720 120fps+
 1920x1080 55fps
