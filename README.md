@@ -9,7 +9,7 @@ Bootleg is a hackable game console made for indie devs and homebrewers.
 * Designed for Raspberry Pi 4b 8GB
   * Great cooling and OC/overvolt is required (>=2.0GHz)
   * Sata SSD over USB3.0 as boot device is required
-  * Minimum goal is for native games to run at 1080p30 or 720p60 (might be difficult to reach but we will try)
+  * Minimum goal is for native games to run at 1080p30 or 720p60 (vkQuake3 testing shows we have plenty of headroom already!)
   * All official titles will use this as a target specification.
 * Additionally supports any x86_64 system with dedicated NVidia/AMD graphics
 * Built on a custom Linux distribution (without a preinstalled xorg/X11 stack)
@@ -54,7 +54,11 @@ Bootleg is a hackable game console made for indie devs and homebrewers.
 28c idle (and running OpenArena)
 36c heavy CPU load
 
-Preliminary benchmarks show heavy uplift for OpenGL (OpenArena), heavy uplift for singlecore perf, moderate uplift for multicore perf
+vkQuake3 on X11:
+800x480 250fps+
+1280x720 120fps+
+1920x1080 55fps
+
 ```
 
 ## Mesa build cheatsheet
@@ -92,6 +96,12 @@ Testing it:
 sudo apt install vulkan-utils
 vkcube
 vulkaninfo
+```
+
+# Getting vkQuake3 to build
+
+```
+CFLAGS="-O2 -march=armv8-a+crc+simd -mtune=cortex-a72 -DSDL_DISABLE_IMMINTRIN_H" CXXFLAGS="-O2 -march=armv8-a+crc+simd -mtune=cortex-a72 -DSDL_DISABLE_IMMINTRIN_H"  make -j4
 ```
 
 
