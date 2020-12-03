@@ -47,6 +47,7 @@ Bootleg is a hackable game console made for indie devs and homebrewers.
 
 ## Stable OC
 
+```
 2.1 GHz arm_freq
 900 MHz v3d_freq
 6 overvolt
@@ -54,34 +55,44 @@ Bootleg is a hackable game console made for indie devs and homebrewers.
 36c heavy CPU load
 
 Preliminary benchmarks show heavy uplift for OpenGL (OpenArena), heavy uplift for singlecore perf, moderate uplift for multicore perf
+```
 
 ## Mesa build cheatsheet
 
 Clone repo:
-`git clone https://gitlab.freedesktop.org/mesa/mesa`
+
+```
+git clone https://gitlab.freedesktop.org/mesa/mesa
+```
 
 Install buildtools:
-`sudo apt install meson flex bison`
-`sudo -H pip install Mako`
+```
+sudo apt install meson flex bison
+sudo -H pip install Mako
+```
 
 Install dependencies:
-`sudo apt build-dep mesa`
-
-`sudo apt install libxcb-shm0-dev`
-
-
+```
+sudo apt build-dep mesa
+sudo apt install libxcb-shm0-dev
+```
 
 X11 devel:
-`CFLAGS="-mcpu=cortex-a72" CXXFLAGS="-mcpu=cortex-a72" meson --prefix /usr -Dplatforms=x11 -Dvulkan-drivers=broadcom -Ddri-drivers= -Dgallium-drivers=kmsro,v3d,vc4 -Dbuildtype=release build-system/`
+```
+CFLAGS="-mcpu=cortex-a72" CXXFLAGS="-mcpu=cortex-a72" meson --prefix /usr -Dplatforms=x11 -Dvulkan-drivers=broadcom -Ddri-drivers= -Dgallium-drivers=kmsro,v3d,vc4 -Dbuildtype=release build-system/
+```
 
 Optimized headless:
-`CFLAGS="-O2 -march=armv8-a+crc+simd -mtune=cortex-a72" CXXFLAGS="-O2 -march=armv8-a+crc+simd -mtune=cortex-a72" meson --prefix=/usr -Dglx=disabled -Dplatforms= -Dllvm=disabled -Dvulkan-drivers=broadcom -Ddri-drivers='' -Dgallium-drivers=v3d,vc4,kmsro -Dbuildtype=release build-system/`
+```
+CFLAGS="-O2 -march=armv8-a+crc+simd -mtune=cortex-a72" CXXFLAGS="-O2 -march=armv8-a+crc+simd -mtune=cortex-a72" meson --prefix=/usr -Dglx=disabled -Dplatforms= -Dllvm=disabled -Dvulkan-drivers=broadcom -Ddri-drivers='' -Dgallium-drivers=v3d,vc4,kmsro -Dbuildtype=release build-system/
+```
 
 Testing it:
-`sudo apt install vulkan-utils`
-`vkcube`
-`vulkaninfo`
-
+```
+sudo apt install vulkan-utils
+vkcube
+vulkaninfo
+```
 
 
 
