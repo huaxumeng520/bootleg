@@ -183,8 +183,13 @@ void bootleg::DashboardMode::update(double seconds)
   updateBackground(seconds);
 
   char str[26];
-  auto time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+  char *strr = &str[0];
+  time_t time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+#if defined(WIR_Windows)
   ctime_s(str, sizeof str, &time);
+#elif defined(WIR_Linux)
+  strr = ctime(&time);
+#endif
 
   m_clock->text(wir::utf8to32(wir::substring(str, 11, 5)));
 

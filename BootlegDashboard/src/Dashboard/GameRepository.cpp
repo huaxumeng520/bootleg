@@ -195,7 +195,7 @@ bool bootleg::Repository::loadGame(uint64_t id, Game &out)
 
 bool bootleg::Repository::gameLoaded(uint64_t game)
 {
-  return m_gameIndex.contains(game);
+  return m_gameIndex.find(game) != m_gameIndex.end();
 }
 
 std::string bootleg::Repository::gamesPath()
