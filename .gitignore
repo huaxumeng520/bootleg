@@ -45,3 +45,10 @@
 
 staging
 staging-debug
+
+BootlegDashboard/generated/**/*.cpp
+BootlegDashboard/generated.debug/**/*.cpp
+
+BootlegDashboard/bin/
+BootlegRunner/bin/
+
