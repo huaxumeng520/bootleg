@@ -99,7 +99,7 @@ void bootleg::DashboardMode::onModeActivated()
       , m_bannerMask);
     m_dummyBanners[i]->mode(i < 4 ? BM_ActiveRow : BM_InactiveRow);
   }
-  
+  /*
   auto clockFont = assetManager()->loadSync<kit::Font>("Content/Fonts/TitilliumWeb-ExtraLight.asset");
   m_clock = new kit::Text(clockFont, 36.0f, U"00:00");
   m_clock->alignment(kit::TA_TopRight);
@@ -129,7 +129,7 @@ void bootleg::DashboardMode::onModeActivated()
 
   m_menuSettings = new kit::Text(menuFont, 48.0f, U"Settings");
   m_menuSettings->color({1.0f, 1.0f, 1.0f, 0.25f});
-  m_menuSettings->position({800.f, 96.f});
+  m_menuSettings->position({800.f, 96.f});*/
 }
 
 void bootleg::DashboardMode::onModeDeactivated()
@@ -140,7 +140,7 @@ void bootleg::DashboardMode::onModeDeactivated()
     delete m_dummyBanners[i];
   }
 
-  delete m_menuGames;
+  /*delete m_menuGames;
   delete m_menuStore;
   delete m_menuDownloads;
   delete m_menuSettings;
@@ -148,7 +148,7 @@ void bootleg::DashboardMode::onModeDeactivated()
   delete m_groupMostPlayed;
   delete m_groupNintendoSwitch;
 
-  delete m_clock;
+  delete m_clock;*/
 
   delete m_repository;
 }
@@ -180,28 +180,48 @@ void renderActiveRow(glm::vec2 position)
 
 void bootleg::DashboardMode::update(double seconds)
 {
-  updateBackground(seconds);
 
-  char str[26];
-  char *strr = &str[0];
-  time_t time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+  static double ss = 0.0;
+  static bool b = false;
+
+  if(ss >= 1.0f)
+  {
+    m_dummyBanners[2]->mode(b ? BM_Selected : BM_ActiveRow);
+    m_dummyBanners[1]->mode(b ? BM_ActiveRow : BM_Selected);
+    
+    b = !b;
+
+    ss = 0.0f;
+  }
+
+  ss += seconds;
+
+
+
+  //updateBackground(seconds);
+
+  //char str[26];
+  //char *strr = &str[0];
+  //time_t time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 #if defined(WIR_Windows)
-  ctime_s(str, sizeof str, &time);
+  //ctime_s(str, sizeof str, &time);
 #elif defined(WIR_Linux)
-  strr = ctime(&time);
+  //strr = ctime(&time);
 #endif
 
-  m_clock->text(wir::utf8to32(wir::substring(str, 11, 5)));
+  //m_clock->text(wir::utf8to32(wir::substring(str, 11, 5)));
 
+/*
   m_clock->render();
 
   m_menuGames->render();
   m_menuStore->render();
   m_menuDownloads->render();
-  m_menuSettings->render();
+  m_menuSettings->render();*/
 
-  m_groupMostPlayed->render();
-  m_groupNintendoSwitch->render();
+  //m_groupMostPlayed->render();
+  //m_groupNintendoSwitch->render();
+
 
   auto r = renderManager();
 

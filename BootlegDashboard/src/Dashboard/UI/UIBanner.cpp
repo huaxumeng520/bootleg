@@ -3,6 +3,7 @@
 #include "Dashboard/UI/UIBanner.hpp"
 
 #include "Dashboard/UI/UIBox.hpp"
+#include "Dashboard/Resolution.hpp"
 
 #include <KIT/Engine.hpp>
 #include <KIT/Managers/RenderManager.hpp>

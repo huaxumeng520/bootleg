@@ -4,7 +4,7 @@ LIBNAME		:= dashboard
 DEBUG 		?= 0
 PREFIX		:= /opt/bootleg
 CXX			:= g++
-CXXFLAGS	:= -std=c++2a -Wall -Wpedantic -Wno-unused-parameter -fPIC
+CXXFLAGS	:= -std=c++2a -Wall -Wpedantic -Wno-unused-parameter -fPIC  -march=armv8-a+crc+simd -mtune=cortex-a72
 LDFLAGS		:= -ldl -pthread -shared 
 
 ifeq ($(DEBUG), 1)
