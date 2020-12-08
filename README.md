@@ -33,10 +33,10 @@ Bootleg is a hackable game console made for indie devs and homebrewers.
 - [X] Port KIT to Linux and ARM64
 - [X] Get Dashboard running on X11 for development purposes
 - [X] Temporarily workaround lack of `shaderSampledImageArrayDynamicIndexing` support (mesa issue #3943)
+- [X] Implement direct rendering using VK_KHR_display
 - [ ] Implement input in Linux using evdev (/dev/input)
 - [ ] Optimize performance to get at least 60 FPS @ 1080p in dashboard 
 - [ ] Get Dashboard to MVP status
-- [ ] Implement direct rendering using VK_KHR_display
 
 
 ### End goal
