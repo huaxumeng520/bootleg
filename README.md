@@ -19,7 +19,7 @@ Bootleg is a hackable game console made for indie devs and homebrewers.
   * Efficient and powerful Vulkan-powered rendering everywhere
   * Great input support out of the box 
  * Integrated Steam Link, if possible. Pretty low priority, but if easy then just do it.
-  * Potentially integrated emulator support out of the box; NES, SNES, N64, PSX, PS2, GC, PSP, Switch?
+ * Potentially integrated emulator support out of the box; NES, SNES, N64, PSX, PS2, GC, PSP, Switch?
    * Requires extra steps for the user to install system files.
    * Requires lot of work
    * Is a big want
