@@ -5,14 +5,13 @@
 
 namespace bootleg
 {
-    const glm::uvec2 baseline {1920, 1080};
-    const glm::uvec2 full {1280, 720};
-    const glm::uvec2 retro {640, 360};
+  // The reference resolution (what we design towards)
+  static const glm::uvec2 referenceResolution{1920, 1080};
 
-    const glm::vec2 baseline_f {baseline.x, baseline.y};
-    const glm::vec2 full_f {full.x, full.y};
-    const glm::vec2 retro_f {retro.x, retro.y};
+  // The actual target resolution
+  static const glm::uvec2 targetResolution{1280, 720};
 
-    const glm::vec2 scale_full{ full_f / baseline_f };
-    const glm::vec2 scale_retro{ retro_f / baseline_f };
+
+  glm::vec2 targetSpace(glm::vec2 const &p);
+  float targetSpace(float p);
 }

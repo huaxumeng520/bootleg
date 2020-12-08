@@ -113,11 +113,11 @@ glm::vec2 bootleg::UIBanner::modeSize(BannerMode mode)
   switch (mode)
   {
   case BM_ActiveRow:
-    return {320.f, 192.f};
+    return targetSpace({320.f, 192.f});
   case BM_InactiveRow:
-    return {320.f, 192.f};
+    return targetSpace({320.f, 192.f});
   case BM_Selected:
-    return {416.f, 250.f};
+    return targetSpace({416.f, 250.f});
   default:
     return {};
   }
@@ -158,7 +158,7 @@ float bootleg::UIBanner::modeBorderSize(BannerMode mode)
   switch (mode)
   {
   case BM_Selected:
-    return 4.0f;
+    return targetSpace(4.0f);
   default:
     return 0.0f;
   }
@@ -169,7 +169,7 @@ glm::vec2 bootleg::UIBanner::modeInfoSize(BannerMode mode)
   switch (mode)
   {
   case BM_Selected:
-    return {0.0f, 80.0f};
+    return targetSpace({0.0f, 80.0f});
   default:
     return {0.0f, 0.0f};
   }

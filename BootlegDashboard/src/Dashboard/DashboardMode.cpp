@@ -2,6 +2,7 @@
 #include "Dashboard/DashboardMode.hpp"
 #include "Dashboard/GameRepository.hpp"
 
+#include "Dashboard/Resolution.hpp"
 #include "Dashboard/UI/UIBox.hpp"
 #include "Dashboard/UI/UIMask.hpp"
 #include "Dashboard/UI/UIBanner.hpp"
@@ -89,7 +90,7 @@ void bootleg::DashboardMode::onModeActivated()
   m_backgroundBlurred = assetManager()->loadSync<kit::Texture>("Content/Wallpaper/RuvimMiksanskiy_Winter_Blurred.asset");
 
   m_bannerMask = new UIMask(engine(),
-    {0.0f, 0.0f}, {1920.f, 1080.f},
+    {0.0f, 0.0f}, targetSpace({1920.f, 1080.f}),
     assetManager()->loadSync<kit::Texture>("Content/Masks/GamesOverviewMask.asset") );
    
   for (uint32_t i = 0; i < m_dummyBanners.size(); i++)
@@ -99,37 +100,37 @@ void bootleg::DashboardMode::onModeActivated()
       , m_bannerMask);
     m_dummyBanners[i]->mode(i < 4 ? BM_ActiveRow : BM_InactiveRow);
   }
-  /*
+
   auto clockFont = assetManager()->loadSync<kit::Font>("Content/Fonts/TitilliumWeb-ExtraLight.asset");
-  m_clock = new kit::Text(clockFont, 36.0f, U"00:00");
+  m_clock = new kit::Text(clockFont, targetSpace(36.0f), U"00:00");
   m_clock->alignment(kit::TA_TopRight);
   m_clock->color({1.f, 1.f, 1.f, 0.7f});
-  m_clock->position({1920.f - 64.0f, 48.f});
+  m_clock->position(targetSpace({1920.f - 64.0f, 48.f}));
   
 
   auto headerFont = assetManager()->loadSync<kit::Font>("Content/Fonts/TitilliumWeb-Regular.asset");
-  m_groupMostPlayed = new kit::Text(headerFont, 72.0f, U"Most played");
-  m_groupMostPlayed->position({120.f, 240.f});
+  m_groupMostPlayed = new kit::Text(headerFont, targetSpace(72.0f), U"Most played");
+  m_groupMostPlayed->position(targetSpace({120.f, 240.f}));
 
-  m_groupNintendoSwitch = new kit::Text(headerFont, 48.0f, U"Nintendo Switch");
-  m_groupNintendoSwitch->position({120.f, 752.f});
+  m_groupNintendoSwitch = new kit::Text(headerFont, targetSpace(48.0f), U"Nintendo Switch");
+  m_groupNintendoSwitch->position(targetSpace({120.f, 752.f}));
   m_groupNintendoSwitch->color({1.0f, 1.0f, 1.0f, 0.65f});
 
   auto menuFont = assetManager()->loadSync<kit::Font>("Content/Fonts/TitilliumWeb-ExtraLight.asset");
-  m_menuGames = new kit::Text(menuFont, 48.0f, U"Games");
-  m_menuGames->position({112.f, 96.f});
+  m_menuGames = new kit::Text(menuFont, targetSpace(48.0f), U"Games");
+  m_menuGames->position(targetSpace({112.f, 96.f}));
 
-  m_menuStore = new kit::Text(menuFont, 48.0f, U"Store");
+  m_menuStore = new kit::Text(menuFont, targetSpace(48.0f), U"Store");
   m_menuStore->color({1.0f, 1.0f, 1.0f, 0.25f});
-  m_menuStore->position({328.f, 96.f});
+  m_menuStore->position(targetSpace({328.f, 96.f}));
 
-  m_menuDownloads = new kit::Text(menuFont, 48.0f, U"Downloads");
+  m_menuDownloads = new kit::Text(menuFont, targetSpace(48.0f), U"Downloads");
   m_menuDownloads->color({1.0f, 1.0f, 1.0f, 0.25f});
-  m_menuDownloads->position({512.f, 96.f});
+  m_menuDownloads->position(targetSpace({512.f, 96.f}));
 
-  m_menuSettings = new kit::Text(menuFont, 48.0f, U"Settings");
+  m_menuSettings = new kit::Text(menuFont, targetSpace(48.0f), U"Settings");
   m_menuSettings->color({1.0f, 1.0f, 1.0f, 0.25f});
-  m_menuSettings->position({800.f, 96.f});*/
+  m_menuSettings->position(targetSpace({800.f, 96.f}));
 }
 
 void bootleg::DashboardMode::onModeDeactivated()
@@ -140,7 +141,7 @@ void bootleg::DashboardMode::onModeDeactivated()
     delete m_dummyBanners[i];
   }
 
-  /*delete m_menuGames;
+  delete m_menuGames;
   delete m_menuStore;
   delete m_menuDownloads;
   delete m_menuSettings;
@@ -148,7 +149,7 @@ void bootleg::DashboardMode::onModeDeactivated()
   delete m_groupMostPlayed;
   delete m_groupNintendoSwitch;
 
-  delete m_clock;*/
+  delete m_clock;
 
   delete m_repository;
 }
@@ -180,7 +181,6 @@ void renderActiveRow(glm::vec2 position)
 
 void bootleg::DashboardMode::update(double seconds)
 {
-
   static double ss = 0.0;
   static bool b = false;
 
@@ -198,29 +198,28 @@ void bootleg::DashboardMode::update(double seconds)
 
 
 
-  //updateBackground(seconds);
+  updateBackground(seconds);
 
-  //char str[26];
-  //char *strr = &str[0];
-  //time_t time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+  char str[26];
+  char *strr = &str[0];
+  time_t time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 #if defined(WIR_Windows)
-  //ctime_s(str, sizeof str, &time);
+  ctime_s(str, sizeof str, &time);
 #elif defined(WIR_Linux)
-  //strr = ctime(&time);
+  strr = ctime(&time);
 #endif
 
-  //m_clock->text(wir::utf8to32(wir::substring(str, 11, 5)));
+  m_clock->text(wir::utf8to32(wir::substring(str, 11, 5)));
 
-/*
   m_clock->render();
 
   m_menuGames->render();
   m_menuStore->render();
   m_menuDownloads->render();
-  m_menuSettings->render();*/
+  m_menuSettings->render();
 
-  //m_groupMostPlayed->render();
-  //m_groupNintendoSwitch->render();
+  m_groupMostPlayed->render();
+  m_groupNintendoSwitch->render();
 
 
   auto r = renderManager();
@@ -234,7 +233,7 @@ void bootleg::DashboardMode::update(double seconds)
   {
     m_dummyBanners[i]->update(seconds);
     if (m_dummyBanners[i]->mode() != BM_Selected)
-      m_dummyBanners[i]->render({x, y});
+      m_dummyBanners[i]->render(targetSpace({x, y}));
     else
     {
       selectedPos = {x, y};
@@ -250,7 +249,7 @@ void bootleg::DashboardMode::update(double seconds)
   }
 
   if (selected)
-    selected->render(selectedPos);
+    selected->render(targetSpace(selectedPos));
 }
 
 void bootleg::DashboardMode::handleNavigateHorizontal(float delta)
@@ -348,12 +347,12 @@ void bootleg::DashboardMode::updateBackground(double seconds)
   auto r = renderManager();
 
   if (m_backgroundAlpha < 1.0f)
-    r->sprite(glm::vec2(0.0f, 0.0f), glm::vec2(1920.f, 1080.f), m_backgroundBlurred, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    r->sprite(glm::vec2(0.0f, 0.0f), targetSpace({1920.f, 1080.f}), m_backgroundBlurred, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 
   if (m_backgroundAlpha > 0.0f)
-    r->sprite(glm::vec2(0.0f, 0.0f), glm::vec2(1920.f, 1080.f), m_backgroundNormal, glm::vec4(1.0f, 1.0f, 1.0f, m_backgroundAlpha));
+    r->sprite(glm::vec2(0.0f, 0.0f), targetSpace({1920.f, 1080.f}), m_backgroundNormal, glm::vec4(1.0f, 1.0f, 1.0f, m_backgroundAlpha));
 
-  r->sprite({0.0f, 0.0f}, {1920.f, 1080.f}, m_backgroundDarken);
+  r->sprite({0.0f, 0.0f}, targetSpace({1920.f, 1080.f}), m_backgroundDarken);
 }
 
 
