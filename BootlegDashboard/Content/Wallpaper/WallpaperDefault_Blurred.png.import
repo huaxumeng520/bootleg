@@ -1,1 +1,1 @@
-<Texture SourceFile="WallpaperDefault_Blurred.png" OutputFile="WallpaperDefault_Blurred.asset" Colorspace="sRGB" Filter="Anisotropic" EdgeSampling="Clamp" />
+<Texture SourceFile="WallpaperDefault_Blurred.png" OutputFile="WallpaperDefault_Blurred.asset" Colorspace="sRGB" Filter="Trilinear" EdgeSampling="Clamp" />

@@ -1,1 +1,1 @@
-<Texture SourceFile="DummyBanner2.png" OutputFile="DummyBanner2.asset" Colorspace="sRGB" Filter="Anisotropic" EdgeSampling="Clamp" />
+<Texture SourceFile="DummyBanner2.png" OutputFile="DummyBanner2.asset" Colorspace="sRGB" Filter="Trilinear" EdgeSampling="Clamp" />
