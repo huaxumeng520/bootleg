@@ -7,37 +7,37 @@ Bootleg is a hackable game console made for indie devs and homebrewers.
 * Designed for Xbox One controllers, however everything that exposes itself to evdev is supported
   * xpadneo could potentially give us controller batterylevels, forcefeedback etc https://github.com/atar-axis/xpadneo/
 * Designed for Raspberry Pi 4b 8GB
-  * Great cooling and OC/overvolt is required (>=2.0GHz)
-  * Sata SSD over USB3.0 as boot device is required
+  * Overclocked to 2.1GHz CPU and 900MHz GPU
+  * Cooled by tower heatsink/fan cooler
+  * 240GB SATA SSD
   * Minimum goal is for native games to run at 1080p30 or 720p60 (vkQuake3 testing shows we have plenty of headroom already!)
-  * All official titles will use this as a target specification.
 * Additionally supports any x86_64 system with dedicated NVidia/AMD graphics
 * Built on a custom Linux distribution (without a preinstalled xorg/X11 stack)
-* ~~Custom Wayland compositor/shell using the Mir Abstraction Layer: BootlegCompositor~~
 * Renders directly to a display surface, completely bypassing any windowing system
 * Custom Dashboard application, just like on Xbox and Playstation: BootlegDashboard
 * Customized KIT/Odin/WIR technology stack that powers native games as well as the dashboard and overlays:
   * Efficient and powerful Vulkan-powered rendering everywhere
   * Great input support out of the box 
- * Potentially integrated emulator support out of the box; NES, SNES, N64, PSX, PS2, GC, PSP, Switch?
-   * Requires extra steps for the user to install system files.
-   * This is a very low-priority feature, however it is a big want
  * Integrated Steam Link, if possible. Pretty low priority, but if easy then just do it.
-
-## Wanted changes:
-
-* ~~Once/if mesa gets VK_KHR_display_swapchain support for their v3dv driver (they already seem to have VK_KHR_display), we can completely remove the custom Wayland compositor and present/render directly to the monitor output via DRM, which should give us a lot of performance benefits as we could completely skip the overhead of a Wayland server and clients.~~
-* Apparently, we only need the `VK_KHR_display` to create a display surface using `vkCreateDisplayPlaneSurfaceKHR`. This is excellent news and the compositor can probably be thrown out the window!
+  * Potentially integrated emulator support out of the box; NES, SNES, N64, PSX, PS2, GC, PSP, Switch?
+   * Requires extra steps for the user to install system files.
+   * Requires lot of work
+   * Is a big want
 
 ## Where we actually are now
 
-- [X] Get a wayland compositor up and running
-- [X] Iterate on Dashboard design until its lovely
-- [ ] Port the KIT/Odin/WIR stack back to Linux; Input, System, Wayland WSI
-- [ ] Port the KIT/Odin/WIR stack to ARM and make sure everything works
-- [ ] Implement Dashboard and get it to MVP-status
-- [ ] Implement the glue between Dashboard, Compositor and native games (KIT/Odin/WIR)
-- [X] Start thinking about creating a case and physical product design
+- [X] Preliminary case design
+- [X] Testfitting and full internal system build
+- [X] Port WIR to Linux and ARM64
+- [X] Port Odin to Linux and ARM64
+- [X] Port KIT to Linux and ARM64
+- [X] Get Dashboard running on X11 for development purposes
+- [X] Temporarily workaround lack of `shaderSampledImageArrayDynamicIndexing` support (mesa issue #3943)
+- [ ] Implement input in Linux using evdev (/dev/input)
+- [ ] Optimize performance to get at least 60 FPS @ 1080p in dashboard 
+- [ ] Get Dashboard to MVP status
+- [ ] Implement direct rendering using VK_KHR_display
+
 
 ### End goal
 ![Design](https://haikatekk.se/combine3.0.png)
@@ -98,7 +98,7 @@ vkcube
 vulkaninfo
 ```
 
-# Getting vkQuake3 to build
+## Getting vkQuake3 to build
 
 ```
 CFLAGS="-O2 -march=armv8-a+crc+simd -mtune=cortex-a72 -DSDL_DISABLE_IMMINTRIN_H" CXXFLAGS="-O2 -march=armv8-a+crc+simd -mtune=cortex-a72 -DSDL_DISABLE_IMMINTRIN_H"  make -j4
