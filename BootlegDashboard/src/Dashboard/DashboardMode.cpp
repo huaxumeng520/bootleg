@@ -86,21 +86,23 @@ void bootleg::DashboardMode::onModeActivated()
   m_playerState->getButtonEvent("Select") += wir::MemberFunction(this, &bootleg::DashboardMode::handleSelect);
   m_playerState->getButtonEvent("Back") += wir::MemberFunction(this, &bootleg::DashboardMode::handleBack);
 
-  m_backgroundNormal = assetManager()->loadSync<kit::Texture>("Content/Wallpaper/RuvimMiksanskiy_Winter_Normal.asset");
+  //m_backgroundNormal = assetManager()->loadSync<kit::Texture>("Content/Wallpaper/RuvimMiksanskiy_Winter_Normal.asset");
   m_backgroundBlurred = assetManager()->loadSync<kit::Texture>("Content/Wallpaper/RuvimMiksanskiy_Winter_Blurred.asset");
 
+  /*
   m_bannerMask = new UIMask(engine(),
     {0.0f, 0.0f}, targetSpace({1920.f, 1080.f}),
-    assetManager()->loadSync<kit::Texture>("Content/Masks/GamesOverviewMask.asset") );
+    assetManager()->loadSync<kit::Texture>("Content/Masks/GamesOverviewMask.asset") );*/
    
   for (uint32_t i = 0; i < m_dummyBanners.size(); i++)
   {
     m_dummyBanners[i] = new UIBanner(engine(), 
       assetManager()->loadSync<kit::Texture>(wir::format("Content/Banners/DummyBanner%u.asset", i + 1))
-      , m_bannerMask);
+      /*, m_bannerMask*/, nullptr);
     m_dummyBanners[i]->mode(i < 4 ? BM_ActiveRow : BM_InactiveRow);
   }
 
+  /*
   auto clockFont = assetManager()->loadSync<kit::Font>("Content/Fonts/TitilliumWeb-ExtraLight.asset");
   m_clock = new kit::Text(clockFont, targetSpace(36.0f), U"00:00");
   m_clock->alignment(kit::TA_TopRight);
@@ -131,16 +133,19 @@ void bootleg::DashboardMode::onModeActivated()
   m_menuSettings = new kit::Text(menuFont, targetSpace(48.0f), U"Settings");
   m_menuSettings->color({1.0f, 1.0f, 1.0f, 0.25f});
   m_menuSettings->position(targetSpace({800.f, 96.f}));
+  */
 }
 
 void bootleg::DashboardMode::onModeDeactivated()
 {
-  delete m_bannerMask;
+  //delete m_bannerMask;
   for (uint32_t i = 0; i < m_dummyBanners.size(); i++)
   {
     delete m_dummyBanners[i];
   }
 
+  /*
+  
   delete m_menuGames;
   delete m_menuStore;
   delete m_menuDownloads;
@@ -150,7 +155,7 @@ void bootleg::DashboardMode::onModeDeactivated()
   delete m_groupNintendoSwitch;
 
   delete m_clock;
-
+  */
   delete m_repository;
 }
 
@@ -273,7 +278,7 @@ void bootleg::DashboardMode::handleNavigateHorizontal(float delta)
     lastValues.pop_front();
 
 
-
+  /*
   if (delta > 0.0f)
   {
     m_backgroundAlphaTarget = 1.0f;
@@ -281,7 +286,7 @@ void bootleg::DashboardMode::handleNavigateHorizontal(float delta)
   else if (delta < 0.0f)
   {
     m_backgroundAlphaTarget = 0.0f;
-  }
+  }*/
 }
 
 void bootleg::DashboardMode::handleNavigateVertical(float delta)

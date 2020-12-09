@@ -51,20 +51,20 @@ namespace bootleg
     kit::PlayerState *m_playerState = nullptr;
 
 
-    glm::vec4 m_backgroundDarken = wir::srgbEncode({.086f, .082f, .078f, 0.38f});
+    //glm::vec4 m_backgroundDarken = wir::srgbEncode({.086f, .082f, .078f, 0.38f});
 
-    kit::TexturePtr m_backgroundNormal;
+    //kit::TexturePtr m_backgroundNormal;
     kit::TexturePtr m_backgroundBlurred;
-    float m_backgroundAlpha = 1.0f;
+    /*float m_backgroundAlpha = 1.0f;
     float m_backgroundAlphaTarget = 0.0f;
     float m_backgroundAlphaSpeed = 0.65f; 
-
+    */
     void updateBackground(double seconds);
 
 
-    UIMask *m_bannerMask = nullptr;
+    //UIMask *m_bannerMask = nullptr;
     std::array<UIBanner *, 8> m_dummyBanners;
-
+    /*
     kit::Text *m_clock = nullptr;
 
     kit::Text *m_groupMostPlayed = nullptr;
@@ -73,7 +73,7 @@ namespace bootleg
     kit::Text *m_menuGames = nullptr;
     kit::Text *m_menuStore = nullptr;
     kit::Text *m_menuDownloads = nullptr;
-    kit::Text *m_menuSettings = nullptr;
+    kit::Text *m_menuSettings = nullptr;*/
   };
 }
 
