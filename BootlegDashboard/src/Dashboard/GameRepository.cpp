@@ -29,7 +29,7 @@ bootleg::Repository::Repository(DashboardMode *mode)
     return;
   }
 
-  m_path = m_mode->configuration()->get<std::string>("RepositoryPath", "./Repository/");
+  m_path = m_mode->configuration()->get("RepositoryPath", std::string("./Repository/"));
 
   wir::Directory(gamesPath()).iterate(false, [this](auto entry) {
     auto dir = dynamic_cast<wir::Directory *>(entry);

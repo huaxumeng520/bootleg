@@ -208,7 +208,7 @@ void bootleg::DashboardMode::update(double seconds)
 #elif defined(WIR_Linux)
   strr = ctime(&time);
 #endif
-
+  /*
   m_clock->text(wir::utf8to32(wir::substring(str, 11, 5)));
 
   m_clock->render();
@@ -219,7 +219,7 @@ void bootleg::DashboardMode::update(double seconds)
   m_menuSettings->render();
 
   m_groupMostPlayed->render();
-  m_groupNintendoSwitch->render();
+  m_groupNintendoSwitch->render();*/
 
 
   auto r = renderManager();
@@ -326,6 +326,7 @@ void bootleg::DashboardMode::handleBack()
 
 void bootleg::DashboardMode::updateBackground(double seconds)
 {
+  /*
   if (glm::abs(m_backgroundAlpha - m_backgroundAlphaTarget) < 0.01f)
   {
     m_backgroundAlpha = m_backgroundAlphaTarget;
@@ -342,17 +343,17 @@ void bootleg::DashboardMode::updateBackground(double seconds)
 
     m_backgroundAlpha -= magnitude;
   }
-
+  */
 
   auto r = renderManager();
 
-  if (m_backgroundAlpha < 1.0f)
+  //if (m_backgroundAlpha < 1.0f)
     r->sprite(glm::vec2(0.0f, 0.0f), targetSpace({1920.f, 1080.f}), m_backgroundBlurred, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 
-  if (m_backgroundAlpha > 0.0f)
-    r->sprite(glm::vec2(0.0f, 0.0f), targetSpace({1920.f, 1080.f}), m_backgroundNormal, glm::vec4(1.0f, 1.0f, 1.0f, m_backgroundAlpha));
+  //if (m_backgroundAlpha > 0.0f)
+    //r->sprite(glm::vec2(0.0f, 0.0f), targetSpace({1920.f, 1080.f}), m_backgroundNormal, glm::vec4(1.0f, 1.0f, 1.0f, m_backgroundAlpha));
 
-  r->sprite({0.0f, 0.0f}, targetSpace({1920.f, 1080.f}), m_backgroundDarken);
+  //r->sprite({0.0f, 0.0f}, targetSpace({1920.f, 1080.f}), m_backgroundDarken);
 }
 
 
