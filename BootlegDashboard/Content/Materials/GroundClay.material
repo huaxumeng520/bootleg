@@ -1,0 +1,2 @@
+<DefaultMaterial OutputFile="GroundClay.asset"
+    Albedo="Content/Materials/GroundClay_Albedo.asset" />

@@ -24,12 +24,19 @@
 
 
 #include <KIT/Rendering/SpriteRenderer.hpp>
+#include <KIT/Game/Components/StaticMeshComponent.hpp>
+#include <KIT/Game/Components/CameraComponent.hpp>
 
 #include <WIR/String.hpp>
 
 #include <chrono>
 #include <ctime>    
 
+namespace 
+{
+
+  kit::Object *display = nullptr;
+}
 
 bootleg::DashboardMode::DashboardMode(wir::DynamicArguments const &args)
     : kit::GameMode(args)
@@ -134,6 +141,43 @@ void bootleg::DashboardMode::onModeActivated()
   m_menuSettings->color({1.0f, 1.0f, 1.0f, 0.25f});
   m_menuSettings->position(targetSpace({800.f, 96.f}));
   */
+
+  /*
+
+  auto obj = world()->spawnObject("MilitaryRadio");
+  for (uint32_t i = 0; i < 7; i++)
+  {
+    auto mesh = assetManager()->load<kit::Mesh>(wir::format("Content/Models/MilitaryRadio/MilitaryRadioMesh_%u.asset", i));
+    auto comp = obj->spawnComponent<kit::StaticMeshComponent>(wir::format("MilitaryRadioMesh_%u", i));
+    comp->mesh(mesh);
+
+    comp->attach(obj);
+  }
+
+  */
+
+  auto obj = world()->spawnObject("CartoonMesh");
+  for (uint32_t i = 0; i < 2; i++)
+  {
+    auto mesh = assetManager()->load<kit::Mesh>(wir::format("Content/Models/CartoonKnight/CartoonKnightMesh_%u.asset", i));
+    auto comp = obj->spawnComponent<kit::StaticMeshComponent>(wir::format("MilitaryRadioMesh_%u", i));
+    comp->mesh(mesh);
+
+    comp->attach(obj);
+  }
+  obj->translate(glm::vec3(0.0f, 0.5f, 0.0f));
+
+  ::display = obj;
+
+  auto cmObj = world()->spawnObject("Camera");
+  auto cm = cmObj->spawnComponent<kit::CameraComponent>("CameraComponent");
+  cm->attach(cmObj);
+  cm->primary();
+
+  cmObj->translate(kit::Transformable::forward() * -0.9f);
+
+  world()->start();
+
 }
 
 void bootleg::DashboardMode::onModeDeactivated()
@@ -213,6 +257,11 @@ void bootleg::DashboardMode::update(double seconds)
 #elif defined(WIR_Linux)
   strr = ctime(&time);
 #endif
+
+
+
+  ::display->rotateY(float(seconds) * 45.0f);
+
   /*
   m_clock->text(wir::utf8to32(wir::substring(str, 11, 5)));
 
@@ -228,7 +277,7 @@ void bootleg::DashboardMode::update(double seconds)
 
 
   auto r = renderManager();
-
+  /*
   float x = 272.0f;
   float y = 496.0f;
 
@@ -254,7 +303,7 @@ void bootleg::DashboardMode::update(double seconds)
   }
 
   if (selected)
-    selected->render(targetSpace(selectedPos));
+    selected->render(targetSpace(selectedPos));*/
 }
 
 void bootleg::DashboardMode::handleNavigateHorizontal(float delta)
@@ -353,7 +402,7 @@ void bootleg::DashboardMode::updateBackground(double seconds)
   auto r = renderManager();
 
   //if (m_backgroundAlpha < 1.0f)
-    r->sprite(glm::vec2(0.0f, 0.0f), targetSpace({1920.f, 1080.f}), m_backgroundBlurred);
+    //r->sprite(glm::vec2(0.0f, 0.0f), targetSpace({1920.f, 1080.f}), m_backgroundBlurred);
 
   //if (m_backgroundAlpha > 0.0f)
     //r->sprite(glm::vec2(0.0f, 0.0f), targetSpace({1920.f, 1080.f}), m_backgroundNormal, glm::vec4(1.0f, 1.0f, 1.0f, m_backgroundAlpha));
