@@ -48,6 +48,7 @@ bootleg::DashboardMode::~DashboardMode()
 void bootleg::DashboardMode::onModeActivated()
 {
   targetResolution = renderManager()->resolution();
+  LogNotice("Target resolution: %ux%u", targetResolution.x, targetResolution.y);
 
   m_repository = new Repository(this);
 
