@@ -4,7 +4,6 @@
 
 #include "Dashboard/Resolution.hpp"
 #include "Dashboard/UI/UIBox.hpp"
-#include "Dashboard/UI/UIMask.hpp"
 #include "Dashboard/UI/UIBanner.hpp"
 
 #include <KIT/Engine.hpp>
@@ -96,9 +95,7 @@ void bootleg::DashboardMode::onModeActivated()
    
   for (uint32_t i = 0; i < m_dummyBanners.size(); i++)
   {
-    m_dummyBanners[i] = new UIBanner(engine(), 
-      assetManager()->loadSync<kit::Texture>(wir::format("Content/Banners/DummyBanner%u.asset", i + 1))
-      /*, m_bannerMask*/, nullptr);
+    m_dummyBanners[i] = new UIBanner(engine(), assetManager()->loadSync<kit::Texture>(wir::format("Content/Banners/DummyBanner%u.asset", i + 1)));
     m_dummyBanners[i]->mode(i < 4 ? BM_ActiveRow : BM_InactiveRow);
   }
 
@@ -353,7 +350,7 @@ void bootleg::DashboardMode::updateBackground(double seconds)
   auto r = renderManager();
 
   //if (m_backgroundAlpha < 1.0f)
-    r->sprite(glm::vec2(0.0f, 0.0f), targetSpace({1920.f, 1080.f}), m_backgroundBlurred, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    r->sprite(glm::vec2(0.0f, 0.0f), targetSpace({1920.f, 1080.f}), m_backgroundBlurred);
 
   //if (m_backgroundAlpha > 0.0f)
     //r->sprite(glm::vec2(0.0f, 0.0f), targetSpace({1920.f, 1080.f}), m_backgroundNormal, glm::vec4(1.0f, 1.0f, 1.0f, m_backgroundAlpha));

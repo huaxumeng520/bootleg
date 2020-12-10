@@ -8,10 +8,10 @@
 #include <KIT/Engine.hpp>
 #include <KIT/Managers/RenderManager.hpp>
 
-bootleg::UIBanner::UIBanner(kit::Engine *engine, kit::TexturePtr texture, UIMask *mask)
-    : m_engine(engine), m_bannerTexture(texture), m_mask(mask)
+bootleg::UIBanner::UIBanner(kit::Engine *engine, kit::TexturePtr texture)
+    : m_engine(engine), m_bannerTexture(texture)
 {
-  m_mainBox = new UIBox(m_engine, {}, {}, m_bannerTexture, m_mask);
+  m_mainBox = new UIBox(m_engine, {}, {}, m_bannerTexture, false);
   m_mainBox->origin(O_Center);
 }
 
@@ -69,7 +69,6 @@ void bootleg::UIBanner::update(double seconds)
 void bootleg::UIBanner::render(glm::vec2 position)
 {
   static const glm::vec4 borderColor = wir::srgbEncode({0.0f, 70.f / 255.f, 180.f / 255.f, 1.0f});
-  static const glm::vec4 infoColor = {0.0f, 0.0f, 0.0f, 0.95f};
 
   auto topLeft = applyOrigin(O_Center, position, m_size);
   auto r = m_engine->renderManager();
@@ -100,7 +99,6 @@ void bootleg::UIBanner::mode(BannerMode newMode, bool instant)
   m_oldMode = m_mode;
   m_mode = newMode;
   m_modeDelta = instant ? 1.0f : 0.0f;
-  m_mainBox->mask(newMode == BM_Selected ? nullptr : m_mask);
 }
 
 glm::vec2 bootleg::UIBanner::modeSize(BannerMode mode)

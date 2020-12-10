@@ -1,16 +1,18 @@
 
 #include "Dashboard/UI/UIBox.hpp"
-#include "Dashboard/UI/UIMask.hpp"
 
 #include <KIT/Managers/RenderManager.hpp>
+#include <KIT/Configuration.hpp>
 
-bootleg::UIBox::UIBox(kit::Engine *engine, glm::vec2 position, glm::vec2 size, kit::TexturePtr texture, UIMask *mask, glm::vec4 color)
-    : m_engine(engine), m_position(position), m_size(size), m_texture(texture), m_mask(mask), m_color(color)
+
+bootleg::UIBox::UIBox(kit::Engine *engine, glm::vec2 position, glm::vec2 size, kit::TexturePtr texture, bool alpha, glm::vec4 color)
+    : m_engine(engine), m_position(position), m_size(size), m_texture(texture), m_color(color), m_alpha(alpha)
 {
+  
 }
 
-bootleg::UIBox::UIBox(kit::Engine *engine, glm::vec2 position, glm::vec2 size, glm::vec4 color, UIMask *mask)
-    : m_engine(engine), m_position(position), m_size(size), m_texture(nullptr), m_mask(mask), m_color(color)
+bootleg::UIBox::UIBox(kit::Engine *engine, glm::vec2 position, glm::vec2 size, glm::vec4 color)
+    : m_engine(engine), m_position(position), m_size(size), m_texture(nullptr), m_color(color)
 {
 }
 
@@ -20,17 +22,16 @@ bootleg::UIBox::~UIBox()
 
 void bootleg::UIBox::render()
 {
+  static bool useAlpha = m_engine->configuration()->get("DashboardAlphaBlend", true);
+
   auto r = m_engine->renderManager();
   auto pos = applyOrigin(m_origin, m_position, m_size);
 
-  if (m_mask)
-  {
-    auto maskPos = applyOrigin(m_mask->origin(), m_mask->position(), m_mask->size());
-    r->spriteMasked(pos, m_size, m_texture, maskPos, m_mask->size(), m_mask->texture(), m_color, m_uvRect);
-  }
-  else 
-  {
-    r->sprite(pos, m_size, m_texture, m_color, m_uvRect);
-  }
+  auto c = m_color;
+  if (!useAlpha && c.a != 0.0f)
+    c.a = 1.0f;
+
+
+  r->sprite(pos, m_size, m_texture, m_alpha, c, m_uvRect);
   
 }

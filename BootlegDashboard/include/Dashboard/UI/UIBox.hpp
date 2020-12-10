@@ -17,8 +17,8 @@ namespace bootleg
   class UIBox
   {
   public:
-    UIBox(kit::Engine *engine, glm::vec2 position, glm::vec2 size, kit::TexturePtr texture, UIMask *mask = nullptr, glm::vec4 color = {1.0f, 1.0f, 1.0f, 1.0f});
-    UIBox(kit::Engine *engine, glm::vec2 position, glm::vec2 size, glm::vec4 color, UIMask *mask = nullptr);
+    UIBox(kit::Engine *engine, glm::vec2 position, glm::vec2 size, kit::TexturePtr texture, bool alpha= false, glm::vec4 color = {1.0f, 1.0f, 1.0f, 1.0f});
+    UIBox(kit::Engine *engine, glm::vec2 position, glm::vec2 size, glm::vec4 color);
     virtual ~UIBox();
 
     void render();
@@ -54,12 +54,6 @@ namespace bootleg
       m_uvRect = newValue;
     }
 
-    void mask(UIMask *newValue)
-    {
-      m_mask = newValue;
-    }
-
-
 
     UIOrigin origin() const
     {
@@ -91,11 +85,6 @@ namespace bootleg
       return m_uvRect;
     }
 
-    UIMask *mask() const
-    {
-      return m_mask;
-    }
-
   protected:
     kit::Engine *m_engine = nullptr;
     
@@ -106,8 +95,8 @@ namespace bootleg
 
     kit::TexturePtr m_texture;
     glm::vec4 m_color;
+    bool m_alpha = false;
 
-    UIMask *m_mask = nullptr;
   };
 
 }

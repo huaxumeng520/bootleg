@@ -14,7 +14,6 @@
 namespace bootleg
 {
   class UIBanner;
-  class UIMask;
 
   class Repository;
 

@@ -125,7 +125,6 @@ $(WIROutputDir)\bin\Release\WIR.StaticCodeGenerator.exe --inputPath=$(ProjectDir
     <ClInclude Include="include\Dashboard\UI\UIBanner.hpp" />
     <ClInclude Include="include\Dashboard\UI\UIBannerRow.hpp" />
     <ClInclude Include="include\Dashboard\UI\UIBox.hpp" />
-    <ClInclude Include="include\Dashboard\UI\UIMask.hpp" />
     <ClInclude Include="include\Dashboard\UI\UIOrigin.hpp" />
   </ItemGroup>
   <ItemGroup>
@@ -141,7 +140,6 @@ $(WIROutputDir)\bin\Release\WIR.StaticCodeGenerator.exe --inputPath=$(ProjectDir
     <ClCompile Include="src\Dashboard\Module.cpp" />
     <ClCompile Include="src\Dashboard\DashboardMode.cpp" />
     <ClCompile Include="src\Dashboard\UI\UIBox.cpp" />
-    <ClCompile Include="src\Dashboard\UI\UIMask.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="BootlegDashboard.props" />

@@ -19,7 +19,7 @@ namespace bootleg
   class UIBanner 
   {
   public:
-    UIBanner(kit::Engine *engine, kit::TexturePtr texture, UIMask *mask);
+    UIBanner(kit::Engine *engine, kit::TexturePtr texture);
     virtual ~UIBanner();
 
     void update(double seconds);
@@ -41,8 +41,6 @@ namespace bootleg
     glm::vec2 modeInfoSize(BannerMode mode);
 
     kit::Engine *m_engine = nullptr;
-
-    UIMask *m_mask = nullptr;
 
     BannerMode m_mode = BM_InactiveRow;
     BannerMode m_oldMode = BM_InactiveRow;

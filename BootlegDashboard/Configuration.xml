@@ -1,2 +1,2 @@
-<Boolean name="VrSupported" value="false" />
-<Boolean name="DisableRenderer" value="true" />
+<Parameter name="VrSupported" value="false" />
+<Parameter name="DisableRenderer" value="true" />
