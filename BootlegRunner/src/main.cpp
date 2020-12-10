@@ -31,5 +31,7 @@ int main(int argc, char**argv)
 
 	::engine->run();
 	
+	delete ::engine;
+
 	return 0;
 }
