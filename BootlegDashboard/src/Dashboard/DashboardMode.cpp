@@ -47,6 +47,8 @@ bootleg::DashboardMode::~DashboardMode()
 
 void bootleg::DashboardMode::onModeActivated()
 {
+  targetResolution = renderManager()->resolution();
+
   m_repository = new Repository(this);
 
   m_playerState = gameManager()->playerState(0);

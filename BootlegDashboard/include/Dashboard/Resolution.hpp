@@ -9,7 +9,7 @@ namespace bootleg
   static const glm::uvec2 referenceResolution{1920, 1080};
 
   // The actual target resolution
-  static const glm::uvec2 targetResolution{1920, 1080};
+  static glm::uvec2 targetResolution{1920, 1080};
 
 
   glm::vec2 targetSpace(glm::vec2 const &p);
