@@ -156,7 +156,7 @@ void bootleg::DashboardMode::onModeActivated()
 
   */
 
-  auto obj = world()->spawnObject("CartoonMesh");
+  /*auto obj = world()->spawnObject("CartoonMesh");
   for (uint32_t i = 0; i < 2; i++)
   {
     auto mesh = assetManager()->load<kit::Mesh>(wir::format("Content/Models/CartoonKnight/CartoonKnightMesh_%u.asset", i));
@@ -176,7 +176,7 @@ void bootleg::DashboardMode::onModeActivated()
 
   cmObj->translate(kit::Transformable::forward() * -0.9f);
 
-  world()->start();
+  world()->start();*/
 
 }
 
@@ -260,7 +260,7 @@ void bootleg::DashboardMode::update(double seconds)
 
 
 
-  ::display->rotateY(float(seconds) * 45.0f);
+  //::display->rotateY(float(seconds) * 45.0f);
 
   /*
   m_clock->text(wir::utf8to32(wir::substring(str, 11, 5)));
@@ -277,7 +277,7 @@ void bootleg::DashboardMode::update(double seconds)
 
 
   auto r = renderManager();
-  /*
+  
   float x = 272.0f;
   float y = 496.0f;
 
@@ -303,7 +303,7 @@ void bootleg::DashboardMode::update(double seconds)
   }
 
   if (selected)
-    selected->render(targetSpace(selectedPos));*/
+    selected->render(targetSpace(selectedPos));
 }
 
 void bootleg::DashboardMode::handleNavigateHorizontal(float delta)
@@ -327,8 +327,8 @@ void bootleg::DashboardMode::handleNavigateHorizontal(float delta)
     lastValues.pop_front();
 
 
-  /*
-  if (delta > 0.0f)
+  
+  /*if (delta > 0.0f)
   {
     m_backgroundAlphaTarget = 1.0f;
   }
@@ -402,7 +402,7 @@ void bootleg::DashboardMode::updateBackground(double seconds)
   auto r = renderManager();
 
   //if (m_backgroundAlpha < 1.0f)
-    //r->sprite(glm::vec2(0.0f, 0.0f), targetSpace({1920.f, 1080.f}), m_backgroundBlurred);
+    r->sprite(glm::vec2(0.0f, 0.0f), targetSpace({1920.f, 1080.f}), m_backgroundBlurred);
 
   //if (m_backgroundAlpha > 0.0f)
     //r->sprite(glm::vec2(0.0f, 0.0f), targetSpace({1920.f, 1080.f}), m_backgroundNormal, glm::vec4(1.0f, 1.0f, 1.0f, m_backgroundAlpha));
