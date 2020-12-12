@@ -201,7 +201,7 @@ int main(int argc, char **argv)
   auto instance = new odin::Instance("MyAppName", renderDisplay);
   auto threadContext = new odin::ThreadContext(instance);
 
-  renderDisplay->initialize(m_threadContext);
+  renderDisplay->initialize(threadContext);
 
   
 
