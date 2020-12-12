@@ -1,8 +1,8 @@
 
 #include <Odin/Instance.hpp>
-#include <Odin/RenderPass.hpp>
+#include <Odin/Renderpass.hpp>
 #include <Odin/Subpass.hpp>
-#include <Odin/Rendertarget.hpp>
+#include <Odin/RenderTarget.hpp>
 #include <Odin/DataBuffer.hpp>
 #include <Odin/Sampler.hpp>
 #include <Odin/Shader.hpp>
