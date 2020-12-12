@@ -111,6 +111,7 @@ void main()
 {
     vec4 inputHdrValue = subpassLoad(inputHdr).rgba * exposure;
     outColor.rgb = (Uncharted2Tonemap(inputHdrValue.rgb) / Uncharted2Tonemap(vec3(whitepoint)));
+    outColor.r = 1.0;
     outColor.a = 1.0;
 }
 
