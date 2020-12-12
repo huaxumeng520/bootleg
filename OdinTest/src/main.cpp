@@ -200,7 +200,7 @@ int main(int argc, char **argv)
   displayParams.maxConcurrentFrames = 2;
   displayParams.developmentSurface = argc <= 1;
 
-  auto renderDisplay = new odin::RenderDisplay(threadContext, RenderDisplayParams);
+  auto renderDisplay = new odin::RenderDisplay(threadContext, displayParams);
 
   // Load resources
   res::load(instance);
