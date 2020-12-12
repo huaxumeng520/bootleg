@@ -375,12 +375,21 @@ int main(int argc, char **argv)
   cmd.subpasses = {subCmd, tsubCmd};
 
   // Create a command buffer and record the command to it
-  auto cmdBuffer = new odin::CommandBuffer(threadContext);
-  cmdBuffer->record({cmd});
+  auto cmdBufferA = new odin::CommandBuffer(threadContext);
+  auto cmdBufferB = new odin::CommandBuffer(threadContext);
+  bool bufferFlipped = false;
+
+  auto flipBuffer = [&](){ bufferFlipped = !bufferFlipped; };
+  auto frontBuffer = [=]() -> odin::CommandBuffer*{ return bufferFlipped? cmdBufferB : cmdBufferA; };
+  auto backBuffer = [=]() -> odin::CommandBuffer*{ return bufferFlipped? cmdBufferA : cmdBufferB; };
 
   // Create a frame fence
 
-  auto fence = new odin::Fence(instance);
+  auto fenceA = new odin::Fence(instance);
+  auto fenceB = new odin::Fence(instance);
+
+    auto frontFence = [=]() -> odin::Fence *{ return bufferFlipped? fenceB : fenceA; };
+  auto backFence = [=]() -> odin::Fence *{ return bufferFlipped? fenceA : fenceB; };
 
   auto startupMs = perfTimer.seconds() * 1000.f;
   LogNotice("Startup time: %f ms", startupMs);
@@ -397,26 +406,30 @@ int main(int argc, char **argv)
     time += deltaTime;
 
     renderDisplay->update(deltaTime);
-
     
+    auto buffer = backBuffer();
+    auto fence = backFence();
+
+    // record
+    buffer->record({cmd});
+
+    // fennce 
+    if (!fence->wait(0))
+      continue;
+    fence->reset();
+
+    // descriptors
     modelMatrix = glm::rotate(modelMatrix, glm::radians(30.0f * float(deltaTime)), glm::vec3(1.0f, 1.0f, 0.0f));
     mvpMatrix = projectionMatrix * viewMatrix * modelMatrix;
     params->set("parameters", "mvpMatrix", mvpMatrix);
 
-    
-    if (fence->wait(0))
-    {
-      fence->reset();
+    //submity 
+    buffer->submit(fence);
+  
+    flipBuffer();
 
-      cmdBuffer->submit(fence);
-    
-
-      renderDisplay->present();
-      frames++;
-    }
-
-
-
+    renderDisplay->present();
+    frames++;
 
     if (perfTimer.seconds() >= 1.0f)
     {
@@ -427,8 +440,10 @@ int main(int argc, char **argv)
     }
   }
 
-  delete fence;
-  delete cmdBuffer;
+  delete fenceA;
+  delete fenceB;
+  delete cmdBufferA;
+  delete cmdBufferB;
   delete rendertarget;
   delete renderpass;
   delete params;

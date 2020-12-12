@@ -385,7 +385,7 @@ void bootleg::DashboardMode::updateBackground(double seconds)
 
   auto r = renderManager();
 
-    r->sprite(glm::vec2(0.0f, 0.0f), targetSpace({1920.f, 1080.f}), m_backgroundBlurred);
+    //r->sprite(glm::vec2(0.0f, 0.0f), targetSpace({1920.f, 1080.f}), m_backgroundBlurred);
 }
 
 
