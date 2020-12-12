@@ -230,7 +230,7 @@ int main(int argc, char **argv)
   auto renderpassDepth = renderpass->createAttachment(odin::F_D32_SFLOAT);
   auto renderpassLdr = renderpass->createAttachment(odin::F_RGBA8_SRGB);
   auto subpass = renderpass->createSubpass({renderpassOut}, renderpassDepth);
-  auto subpassTonemap = renderPass->createSubpass({renderpassLdr}, nullptr, {renderpassOut});
+  auto subpassTonemap = renderpass->createSubpass({renderpassLdr}, nullptr, {renderpassOut});
   renderpass->link();
 
   // Create a rendertarget for our renderpass, and set the clearvalue to blue
