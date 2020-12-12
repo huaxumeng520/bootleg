@@ -216,7 +216,7 @@ int main(int argc, char **argv)
 
   glm::mat4 viewMatrix = glm::mat4(1.0f);
   glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 4.0f));
-  glm::mat4 projectionMatrix = glm::perspective(glm::radians(72.f), 1024.f / 768.f, 0.01f, 100.0f);
+  glm::mat4 projectionMatrix = glm::perspective(glm::radians(72.f), 1280.f / 720.f, 0.01f, 100.0f);
   glm::mat4 mvpMatrix = projectionMatrix * viewMatrix * modelMatrix;
 
   auto params = new odin::Parameters(threadContext, program);
@@ -226,13 +226,13 @@ int main(int argc, char **argv)
 
   // Create simple renderpass with one color attachemnt, one depth attachment and a single subpass
   auto renderpass = new odin::RenderPass(instance);
-  auto renderpassOut = renderpass->createAttachment(odin::F_RGBA8_SRGB);
-  auto renderpassDepth = renderpass->createAttachment(odin::F_D24S_UNORM);
+  auto renderpassOut = renderpass->createAttachment(odin::F_RGBA16_SFLOAT);
+  auto renderpassDepth = renderpass->createAttachment(odin::F_D32_SFLOAT);
   auto subpass = renderpass->createSubpass({renderpassOut}, renderpassDepth);
   renderpass->link();
 
   // Create a rendertarget for our renderpass, and set the clearvalue to blue
-  auto rendertarget = new odin::RenderTarget(renderpass, glm::uvec2(1024, 768));
+  auto rendertarget = new odin::RenderTarget(renderpass, glm::uvec2(1280, 720));
   rendertarget->clearValue(renderpassOut, glm::vec4(0.05f, 0.2f, 0.7f, 1.0f));
 
   // Get the output texture from the rendertarget, and set it as the source for the renderwindow
