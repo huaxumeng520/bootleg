@@ -358,9 +358,9 @@ int main(int argc, char **argv)
   tprogCmd.program = tonemapProgram;
   tprogCmd.parameters = tonemapParameters;
   tprogCmd.indexBuffer = res::tonemapIndexBuffer;
-  tprogCmd.indexCount = res::tonemapIndexCount;
+  tprogCmd.indexCount = res::triangleIndexCount;
   tprogCmd.vertexBuffer = res::tonemapVertexBuffer;
-  tprogCmd.vertexCount = res::tonemapVertexCount;
+  tprogCmd.vertexCount = res::triangleVertexCount;
 
   odin::SubpassCommand tsubCmd;
   tsubCmd.subpass = subpassTonemap;
