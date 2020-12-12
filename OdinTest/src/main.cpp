@@ -192,15 +192,19 @@ int main(int argc, char **argv)
   wir::Timer perfTimer;
   wir::Timer frameTimer;
 
-  auto instance = new odin::Instance("MyAppName");
-  auto threadContext = new odin::ThreadContext(instance);
-
+  auto renderDisplay = new odin::RenderDisplay(displayParams);
   odin::RenderDisplayParams displayParams;
   displayParams.resolution = glm::uvec2(1280, 720);
   displayParams.maxConcurrentFrames = 2;
   displayParams.developmentSurface = argc <= 1;
 
-  auto renderDisplay = new odin::RenderDisplay(threadContext, displayParams);
+  auto instance = new odin::Instance("MyAppName", renderDisplay);
+  auto threadContext = new odin::ThreadContext(instance);
+
+  renderDisplay->initialize(m_threadContext);
+
+  
+
 
   // Load resources
   res::load(instance);
@@ -314,8 +318,11 @@ int main(int argc, char **argv)
   delete program;
   res::unload();
 
-  delete renderDisplay;
+
+  renderDisplay->destroy();
   delete threadContext;
   delete instance;
+
+  delete renderDisplay;
   return 0;
 }
