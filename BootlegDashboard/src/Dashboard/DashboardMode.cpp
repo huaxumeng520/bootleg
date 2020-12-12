@@ -275,7 +275,7 @@ void bootleg::DashboardMode::update(double seconds)
   m_groupMostPlayed->render();
   m_groupNintendoSwitch->render();*/
 
-  /*
+  
   auto r = renderManager();
   
   float x = 272.0f;
@@ -304,7 +304,7 @@ void bootleg::DashboardMode::update(double seconds)
 
   if (selected)
     selected->render(targetSpace(selectedPos));
-  */
+  
 }
 
 void bootleg::DashboardMode::handleNavigateHorizontal(float delta)
@@ -385,7 +385,7 @@ void bootleg::DashboardMode::updateBackground(double seconds)
 
   auto r = renderManager();
 
-   // r->sprite(glm::vec2(0.0f, 0.0f), targetSpace({1920.f, 1080.f}), m_backgroundBlurred);
+    r->sprite(glm::vec2(0.0f, 0.0f), targetSpace({1920.f, 1080.f}), m_backgroundBlurred);
 }
 
 
