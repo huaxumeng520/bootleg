@@ -2,7 +2,7 @@
 #include <Odin/Instance.hpp>
 #include <Odin/RenderPass.hpp>
 #include <Odin/Subpass.hpp>
-#include <Odin/RenderTarget.hpp>
+#include <Odin/Rendertarget.hpp>
 #include <Odin/DataBuffer.hpp>
 #include <Odin/Sampler.hpp>
 #include <Odin/Shader.hpp>
@@ -10,7 +10,7 @@
 #include <Odin/CommandBuffer.hpp>
 #include <Odin/Fence.hpp>
 #include <Odin/Parameters.hpp>
-#include <Odin/RenderWindow.hpp>
+#include <Odin/RenderDisplay.hpp>
 #include <Odin/ThreadContext.hpp>
 
 #include <WIR/Math.hpp>
@@ -195,12 +195,12 @@ int main(int argc, char **argv)
   auto instance = new odin::Instance("MyAppName");
   auto threadContext = new odin::ThreadContext(instance);
 
-  odin::RenderWindowParams windowParameters;
-  windowParameters.title = L"My Application";
-  windowParameters.resizable = false;
-  windowParameters.size = glm::uvec2(1024, 768);
+  odin::RenderDisplayParams displayParams;
+  displayParams.resolution = glm::uvec2(1280, 720);
+  displayParams.maxConcurrentFrames = 2;
+  displayParams.developmentSurface = argc <= 1;
 
-  auto renderWindow = new odin::RenderWindow(threadContext, windowParameters);
+  auto renderDisplay = new odin::RenderDisplay(threadContext, RenderDisplayParams);
 
   // Load resources
   res::load(instance);
@@ -233,7 +233,7 @@ int main(int argc, char **argv)
 
   // Get the output texture from the rendertarget, and set it as the source for the renderwindow
   auto output = rendertarget->texture(renderpassOut);
-  renderWindow->source(output);
+  renderDisplay->source(output);
 
   // Assemble a renderpass command
   odin::ProgramCommand progCmd;
@@ -269,13 +269,13 @@ int main(int argc, char **argv)
   float time = 0.0f;
   uint32_t frames = 0;
 
-  while (!renderWindow->closing())
+  while (!renderDisplay->wantsClose())
   {
     auto deltaTime = frameTimer.seconds();
     frameTimer.reset();
     time += deltaTime;
 
-    renderWindow->update();
+    renderDisplay->update(deltaTime);
 
     
     modelMatrix = glm::rotate(modelMatrix, glm::radians(30.0f * float(deltaTime)), glm::vec3(1.0f, 1.0f, 0.0f));
@@ -290,7 +290,7 @@ int main(int argc, char **argv)
       cmdBuffer->submit(fence);
     
 
-      renderWindow->present();
+      renderDisplay->present();
       frames++;
     }
 
@@ -299,8 +299,8 @@ int main(int argc, char **argv)
 
     if (perfTimer.seconds() >= 1.0f)
     {
-      auto newTitle = wir::format("FPS: %u", frames);
-      renderWindow->title(wir::utf8towide(newTitle));
+      LogNotice("FPS: %u", frames);
+      renderDisplay->title(wir::format("FPS: %u", frames));
       frames = 0;
       perfTimer.reset();
     }
@@ -314,7 +314,7 @@ int main(int argc, char **argv)
   delete program;
   res::unload();
 
-  delete renderWindow;
+  delete renderDisplay;
   delete threadContext;
   delete instance;
   return 0;
