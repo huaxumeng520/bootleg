@@ -66,6 +66,56 @@ void main()
 
 )SHDR";
 
+  const char *toneVertex = R"SHDR(
+#version 450 core
+
+in vec3 vertexPosition;
+
+void main()
+{
+    gl_Position.xyz = vertexPosition;
+    gl_Position.w = 1.0;
+}
+
+  )SHDR";
+
+  const char* toneFragment = R"SHDR(
+#version 450 core
+
+out vec4 outColor;
+
+layout (input_attachment_index = 0) uniform subpassInput inputHdr;
+
+
+uniform parameters
+{
+    float exposure;
+    float whitepoint;
+};
+
+
+
+vec3 Uncharted2Tonemap(vec3 x)
+{
+  float A = 0.15;
+  float B = 0.50;
+  float C = 0.10;
+  float D = 0.20;
+  float E = 0.02;
+  float F = 0.30;
+
+  return ((x*(A*x+C*B)+D*E)/(x*(A*x+B)+D*F))-E/F;
+}
+
+void main()
+{
+    vec4 inputHdrValue = subpassLoad(inputHdr).rgba * exposure;
+    outColor.rgb = (Uncharted2Tonemap(inputHdrValue.rgb) / Uncharted2Tonemap(vec3(whitepoint)));
+    outColor.a = 1.0;
+}
+
+  )SHDR";
+
   const uint32_t vertexCount = 8;
   const uint32_t vertexLength = 6 * vertexCount;
   const uint32_t vertexSize = vertexLength * sizeof(float);
@@ -158,6 +208,10 @@ void main()
   odin::Shader *vertexShader = nullptr;
   odin::Shader *fragmentShader = nullptr;
 
+  odin::Shader *toneVertexShader = nullptr;
+  odin::Shader *toneFragmentShader = nullptr;
+
+
   void load(odin::Context *ctx)
   {
     vertexBuffer = new odin::DataBuffer(ctx, vertexSize, odin::BF_Vertex);
@@ -168,6 +222,9 @@ void main()
 
     vertexShader = new odin::Shader(ctx, odin::SS_Vertex, vertexSource, {}, true);
     fragmentShader = new odin::Shader(ctx, odin::SS_Fragment, fragmentSource, {}, true);
+
+    toneVertexShader = new odin::Shader(ctx, odin::SS_Vertex, toneVertex, {}, true);
+    toneFragmentShader = new odin::Shader(ctx, odin::SS_Fragment, toneFragment, {}, true);
 
     albedo = new odin::Texture(ctx, albedoResolution, odin::F_RGBA8_SRGB, 1);
     albedo->uploadData(reinterpret_cast<uint8_t const *>(albedoData), albedoSize);
@@ -231,6 +288,7 @@ int main(int argc, char **argv)
   auto renderpassLdr = renderpass->createAttachment(odin::F_RGBA8_SRGB);
   auto subpass = renderpass->createSubpass({renderpassOut}, renderpassDepth);
   auto subpassTonemap = renderpass->createSubpass({renderpassLdr}, nullptr, {renderpassOut});
+  subpassTonemap->addDependency(subpass);
   renderpass->link();
 
   // Create a rendertarget for our renderpass, and set the clearvalue to blue
