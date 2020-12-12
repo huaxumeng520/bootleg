@@ -173,6 +173,25 @@ void main()
 
   };
 
+  const uint32_t triangleVertexCount = 3;
+  const uint32_t triangleVertexSize = 3 * triangleVertexCount * sizeof(float);
+
+
+  const float triangleVertexData[3 *3] = {
+    -1.0f, -1.0f, 0.0f,
+    3.0f, -1.0f, 0.0f,
+    -1.0f, 3.0f, 0.0f};
+
+  const uint32_t triangleIndexCount = 3;
+  const uint32_t triangleIndexSize = triangleIndexCount * sizeof(uint32_t);
+
+  const uint32_t triangleIndexData[3] = {
+    0, 1, 2
+  };
+
+
+
+
   const glm::uvec2 albedoResolution = {4, 4};
 
   const uint32_t albedoSize = 4 * 4 * 4;
@@ -202,6 +221,10 @@ void main()
   odin::Texture *albedo = nullptr;
   odin::Sampler *albedoSampler = nullptr;
 
+
+  odin::DataBuffer *tonemapVertexBuffer = nullptr;
+  odin::DataBuffer *tonemapIndexBuffer = nullptr;
+
   odin::DataBuffer *vertexBuffer = nullptr;
   odin::DataBuffer *indexBuffer = nullptr;
 
@@ -219,6 +242,12 @@ void main()
 
     indexBuffer = new odin::DataBuffer(ctx, indexSize, odin::BF_Index);
     indexBuffer->uploadData(reinterpret_cast<uint8_t const *>(indexData), indexSize);
+
+    tonemapVertexBuffer = new odin::DataBuffer(ctx, triangleVertexSize, odin::BF_Vertex);
+    tonemapVertexBuffer->uploadData(reinterpret_cast<uint8_t const*>(triangleVertexData), triangleVertexSize);
+
+    tonemapIndexBuffer = new odin::DataBuffer(ctx, triangleIndexSize, odin::BF_Index);
+    tonemapIndexBuffer->uploadData(reinterpret_cast<uint8_t const *>(triangleIndexData), triangleIndexSize);
 
     vertexShader = new odin::Shader(ctx, odin::SS_Vertex, vertexSource, {}, true);
     fragmentShader = new odin::Shader(ctx, odin::SS_Fragment, fragmentSource, {}, true);
@@ -281,6 +310,15 @@ int main(int argc, char **argv)
   params->set("parameters", "seconds", 0.0f);
   params->set("albedo", res::albedo, res::albedoSampler);
 
+  //tionemap
+  auto tonemapProgram = new odin::Program(instance, {res::toneVertexShader, res::toneFragmentShader});
+  tonemapProgram->vertexStride(sizeof(glm::vec3));
+  tonemapProgram->link();
+
+  auto tonemapParameters = new odin::Parameters(threadContext, tonemapProgram);
+  tonemapParameters->uniformBuffer("parameters")->set("whitepoint", 3.0f);
+  tonemapParameters->uniformBuffer("parameters")->set("exposure", 1.0f);
+
   // Create simple renderpass with one color attachemnt, one depth attachment and a single subpass
   auto renderpass = new odin::RenderPass(instance);
   auto renderpassOut = renderpass->createAttachment(odin::F_RGBA16_SFLOAT);
@@ -295,8 +333,10 @@ int main(int argc, char **argv)
   auto rendertarget = new odin::RenderTarget(renderpass, glm::uvec2(1280, 720));
   rendertarget->clearValue(renderpassOut, glm::vec4(0.05f, 0.2f, 0.7f, 1.0f));
 
+  tonemapParameters->inputAttachment("inputHdr")->set(rendertarget->texture(renderpassOut));
+
   // Get the output texture from the rendertarget, and set it as the source for the renderwindow
-  auto output = rendertarget->texture(renderpassOut);
+  auto output = rendertarget->texture(renderpassLdr);
   renderDisplay->source(output);
 
   // Assemble a renderpass command
@@ -312,10 +352,26 @@ int main(int argc, char **argv)
   subCmd.subpass = subpass;
   subCmd.programs = {progCmd};
 
+
+
+  odin::ProgramCommand tprogCmd;
+  tprogCmd.program = tonemapProgram;
+  tprogCmd.parameters = tonemapParameters;
+  tprogCmd.indexBuffer = res::tonemapIndexBuffer;
+  tprogCmd.indexCount = res::tonemapIndexCount;
+  tprogCmd.vertexBuffer = res::tonemapVertexBuffer;
+  tprogCmd.vertexCount = res::tonemapVertexCount;
+
+  odin::SubpassCommand tsubCmd;
+  tsubCmd.subpass = subpassTonemap;
+  tsubCmd.programs = {tprogCmd};
+
+
+
   odin::RenderPassCommand cmd;
   cmd.renderPass = renderpass;
   cmd.renderTarget = rendertarget;
-  cmd.subpasses = {subCmd};
+  cmd.subpasses = {subCmd, tsubCmd};
 
   // Create a command buffer and record the command to it
   auto cmdBuffer = new odin::CommandBuffer(threadContext);
