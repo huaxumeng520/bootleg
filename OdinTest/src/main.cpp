@@ -404,7 +404,7 @@ int main(int argc, char **argv)
     params->set("parameters", "mvpMatrix", mvpMatrix);
 
     
-    if (fence->signaled())
+    if (fence->wait(0))
     {
       fence->reset();
 
