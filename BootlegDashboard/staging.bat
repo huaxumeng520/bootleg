@@ -15,4 +15,3 @@ xcopy ..\..\Workspace\Output\bin\Debug\*.dll staging-debug\ /y /d
 xcopy ..\..\Workspace\Output\bin\Debug\*.exe staging-debug\ /y /d
 xcopy Content staging-debug\Content /y /i /d /e /h
 xcopy Repository staging-debug\Repository /y /i /d /e /h
-pause

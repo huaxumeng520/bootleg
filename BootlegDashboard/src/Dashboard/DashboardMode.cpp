@@ -36,6 +36,9 @@ namespace
 {
 
   kit::Object *display = nullptr;
+  kit::Transformable *camera = nullptr;
+  float cameraX = 0.0f;
+  float cameraY = 0.0f;
 }
 
 bootleg::DashboardMode::DashboardMode(wir::DynamicArguments const &args)
@@ -66,6 +69,10 @@ void bootleg::DashboardMode::onModeActivated()
   };
 
   // Bind inputs to events
+
+  m_playerState->bindAxis("MouseHorizontal", "ma_x", wir::AT_Normal);
+  m_playerState->bindAxis("MouseVertical", "ma_y", wir::AT_Normal);
+
   m_playerState->bindAxis("NavigateHorizontal", "gamepad_analog_x", wir::AT_Normal);
   m_playerState->bindAxis("NavigateVertical", "gamepad_analog_y", wir::AT_Normal);
   m_playerState->bindButton("NavigateRight", "gamepad_dpad_right", wir::BT_Down);
@@ -82,6 +89,14 @@ void bootleg::DashboardMode::onModeActivated()
   m_playerState->bindButton("Back", "gamepad_b", wir::BT_AsAxisNegative);
   
   // Bind events to functions
+  m_playerState->getAxisEvent("MouseHorizontal") += [](float delta) {
+    ::cameraX += delta;
+  };
+
+  m_playerState->getAxisEvent("MouseVertical") += [](float delta) {
+    ::cameraY += delta;
+  };
+
   m_playerState->getAxisEvent("NavigateHorizontal") += wir::MemberFunction(this, &bootleg::DashboardMode::handleNavigateHorizontal);
   m_playerState->getAxisEvent("NavigateVertical") += wir::MemberFunction(this, &bootleg::DashboardMode::handleNavigateVertical);
 
@@ -96,18 +111,20 @@ void bootleg::DashboardMode::onModeActivated()
   m_playerState->getButtonEvent("Back") += wir::MemberFunction(this, &bootleg::DashboardMode::handleBack);
 
   //m_backgroundNormal = assetManager()->loadSync<kit::Texture>("Content/Wallpaper/RuvimMiksanskiy_Winter_Normal.asset");
-  m_backgroundBlurred = assetManager()->loadSync<kit::Texture>("Content/Wallpaper/RuvimMiksanskiy_Winter_Blurred.asset");
+  //m_backgroundBlurred = assetManager()->loadSync<kit::Texture>("Content/Wallpaper/RuvimMiksanskiy_Winter_Blurred.asset");
 
   /*
   m_bannerMask = new UIMask(engine(),
     {0.0f, 0.0f}, targetSpace({1920.f, 1080.f}),
     assetManager()->loadSync<kit::Texture>("Content/Masks/GamesOverviewMask.asset") );*/
    
+  /*
+  
   for (uint32_t i = 0; i < m_dummyBanners.size(); i++)
   {
     m_dummyBanners[i] = new UIBanner(engine(), assetManager()->loadSync<kit::Texture>(wir::format("Content/Banners/DummyBanner%u.asset", i + 1)));
     m_dummyBanners[i]->mode(i < 4 ? BM_ActiveRow : BM_InactiveRow);
-  }
+  }*/
 
   /*
   auto clockFont = assetManager()->loadSync<kit::Font>("Content/Fonts/TitilliumWeb-ExtraLight.asset");
@@ -157,10 +174,11 @@ void bootleg::DashboardMode::onModeActivated()
   */
 
   auto obj = world()->spawnObject("CartoonMesh");
-  for (uint32_t i = 1; i < 2; i++)
+  for (uint32_t i = 0; i < 1; i++)
   {
     auto mesh = assetManager()->load<kit::Mesh>(wir::format("Content/Models/CartoonKnight/CartoonKnight_%u.asset", i));
     auto comp = obj->spawnComponent<kit::StaticMeshComponent>(wir::format("MilitaryRadioMesh_%u", i));
+   
     comp->mesh(mesh);
 
     comp->attach(obj);
@@ -174,7 +192,7 @@ void bootleg::DashboardMode::onModeActivated()
   cm->attach(cmObj);
   cm->primary();
 
-  cmObj->translate(kit::Transformable::forward() * -0.9f);
+  ::camera = cmObj;
 
   world()->start();
 
@@ -232,7 +250,7 @@ void bootleg::DashboardMode::update(double seconds)
 {
   static double ss = 0.0;
   static bool b = false;
-
+  /*
   if(ss >= 1.0f)
   {
     m_dummyBanners[2]->mode(b ? BM_Selected : BM_ActiveRow);
@@ -247,7 +265,7 @@ void bootleg::DashboardMode::update(double seconds)
 
 
 
-  updateBackground(seconds);
+  updateBackground(seconds);*/
 
   char str[26];
   char *strr = &str[0];
@@ -258,9 +276,13 @@ void bootleg::DashboardMode::update(double seconds)
   strr = ctime(&time);
 #endif
 
-
-
-  ::display->rotateY(float(seconds) * 45.0f);
+  glm::quat rotation = glm::rotate(glm::quat(), glm::radians(::cameraX * 0.5f), glm::vec3(0.0f, 1.0f, 0.0f));
+  rotation = glm::rotate(rotation, glm::radians(::cameraY * -0.5f), glm::vec3(1.0f, 0.0f, 0.0f));
+  glm::vec3 position = rotation * kit::Transformable::forward() * -0.9f;
+  
+   ::camera->localRotation(rotation);
+  ::camera->localPosition(position);
+  //::display->rotateY(float(seconds) * 45.0f);
 
   /*
   m_clock->text(wir::utf8to32(wir::substring(str, 11, 5)));
@@ -275,36 +297,39 @@ void bootleg::DashboardMode::update(double seconds)
   m_groupMostPlayed->render();
   m_groupNintendoSwitch->render();*/
 
-  
-  auto r = renderManager();
-  
-  float x = 272.0f;
-  float y = 496.0f;
-
-  UIBanner *selected = nullptr;
-  glm::vec2 selectedPos;
-  for (int i = 0; i < m_dummyBanners.size(); i++)
+  bool renderUi = false;
+  if (renderUi)
   {
-    m_dummyBanners[i]->update(seconds);
-    if (m_dummyBanners[i]->mode() != BM_Selected)
-      m_dummyBanners[i]->render(targetSpace({x, y}));
-    else
+
+    auto r = renderManager();
+
+    float x = 272.0f;
+    float y = 496.0f;
+
+    UIBanner *selected = nullptr;
+    glm::vec2 selectedPos;
+    for (int i = 0; i < m_dummyBanners.size(); i++)
     {
-      selectedPos = {x, y};
-      selected = m_dummyBanners[i];
+      m_dummyBanners[i]->update(seconds);
+      if (m_dummyBanners[i]->mode() != BM_Selected)
+        m_dummyBanners[i]->render(targetSpace({x, y}));
+      else
+      {
+        selectedPos = {x, y};
+        selected = m_dummyBanners[i];
+      }
+
+      x += 352.f;
+      if (i == 3)
+      {
+        y += 192.f + 256.0f;
+        x = 272.0f;
+      }
     }
 
-    x += 352.f;
-    if (i == 3)
-    {
-      y += 192.f + 256.0f;
-      x = 272.0f;
-    }
+    if (selected)
+      selected->render(targetSpace(selectedPos));
   }
-
-  if (selected)
-    selected->render(targetSpace(selectedPos));
-  
 }
 
 void bootleg::DashboardMode::handleNavigateHorizontal(float delta)
