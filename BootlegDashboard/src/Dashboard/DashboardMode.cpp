@@ -176,7 +176,7 @@ void bootleg::DashboardMode::onModeActivated()
   auto obj = world()->spawnObject("CartoonMesh");
   for (uint32_t i = 0; i < 1; i++)
   {
-    auto mesh = assetManager()->load<kit::Mesh>(wir::format("Content/Models/CartoonKnight/CartoonKnight_%u.asset", i));
+    auto mesh = assetManager()->loadSync<kit::Mesh>(wir::format("Content/Models/CartoonKnight/CartoonKnight_%u.asset", i));
     auto comp = obj->spawnComponent<kit::StaticMeshComponent>(wir::format("MilitaryRadioMesh_%u", i));
    
     comp->mesh(mesh);
