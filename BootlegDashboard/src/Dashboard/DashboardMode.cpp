@@ -38,6 +38,11 @@ namespace
 
   kit::Object *display = nullptr;
   kit::Transformable *camera = nullptr;
+  kit::AnimationComponent *idle = nullptr;
+  kit::AnimationComponent *running = nullptr;
+  kit::AnimationPtr idleAnim;
+  kit::AnimationPtr runningAnim;
+  kit::SkeletalMeshComponent *mesh = nullptr;
   float cameraX = 0.0f;
   float cameraY = 0.0f;
 }
@@ -173,7 +178,7 @@ void bootleg::DashboardMode::onModeActivated()
   }
 
   */
-
+  /*
   auto obj = world()->spawnObject("CartoonMesh");
   for (uint32_t i = 0; i < 2; i++)
   {
@@ -193,9 +198,31 @@ void bootleg::DashboardMode::onModeActivated()
       comp->attach(obj);
       comp->applyInitialPose();
     }
-   
   }
-  obj->translate(glm::vec3(0.0f, 0.5f, 0.0f));
+    obj->translate(glm::vec3(0.0f, 0.5f, 0.0f));
+  */
+
+
+  auto obj = world()->spawnObject("BaseCharacter");
+  auto charm = assetManager()->loadSync<kit::Mesh>("Content/Models/BaseCharacter/BaseCharacter.asset");
+  auto chars = assetManager()->loadSync<kit::Skeleton>("Content/Models/BaseCharacter/Skeleton_BaseCharacter.asset");
+  ::idleAnim = assetManager()->loadSync<kit::Animation>("Content/Models/BaseCharacter/Animation_BaseCharacter_Idle.asset");
+  ::idle = obj->spawnComponent<kit::AnimationComponent>("IdleAnim");
+  ::idle->animation(::idleAnim);
+  ::idle->play();
+
+  ::runningAnim = assetManager()->loadSync<kit::Animation>("Content/Models/BaseCharacter/Animation_BaseCharacter_Running.asset");
+  ::running = obj->spawnComponent<kit::AnimationComponent>("RunningAnim");
+  ::running->animation(::runningAnim);
+  ::running->play();
+
+  ::mesh = obj->spawnComponent<kit::SkeletalMeshComponent>("BaseCharacterMesh");
+  ::mesh->mesh(charm);
+  ::mesh->skeleton(chars);
+  ::mesh->attach(obj);
+  //::mesh->applyInitialPose();
+   
+  obj->translate(glm::vec3(0.0f, 1.0f, 0.0f));
 
   ::display = obj;
 
@@ -212,6 +239,9 @@ void bootleg::DashboardMode::onModeActivated()
 
 void bootleg::DashboardMode::onModeDeactivated()
 {
+  ::idleAnim = nullptr;
+  ::runningAnim = nullptr;
+
   //delete m_bannerMask;
   for (uint32_t i = 0; i < m_dummyBanners.size(); i++)
   {
@@ -290,7 +320,7 @@ void bootleg::DashboardMode::update(double seconds)
 
   glm::quat rotation = glm::rotate(glm::quat(), glm::radians(::cameraX * 0.5f), glm::vec3(0.0f, 1.0f, 0.0f));
   rotation = glm::rotate(rotation, glm::radians(::cameraY * -0.5f), glm::vec3(1.0f, 0.0f, 0.0f));
-  glm::vec3 position = rotation * kit::Transformable::forward() * -0.9f;
+  glm::vec3 position = rotation * kit::Transformable::forward() * -2.0f;
   
    ::camera->localRotation(rotation);
   ::camera->localPosition(position);
@@ -342,6 +372,12 @@ void bootleg::DashboardMode::update(double seconds)
     if (selected)
       selected->render(targetSpace(selectedPos));
   }
+
+  ::idle->update(seconds);
+  ::running->update(seconds);
+
+  ::mesh->applyInitialPose();
+  ::mesh->applyAnimation(::idle);
 }
 
 void bootleg::DashboardMode::handleNavigateHorizontal(float delta)
@@ -424,5 +460,6 @@ void bootleg::DashboardMode::updateBackground(double seconds)
 
     //r->sprite(glm::vec2(0.0f, 0.0f), targetSpace({1920.f, 1080.f}), m_backgroundBlurred);
 }
+
 
 

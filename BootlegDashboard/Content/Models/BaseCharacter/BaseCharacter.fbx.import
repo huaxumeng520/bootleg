@@ -1,0 +1,3 @@
+<Mesh SourceFile="BaseCharacter.fbx" Index16="1" Normal="1" Tangent="0" Bones="1" TexCoord1="1" TexCoord2="0" TexCoord3="0" TexCoord4="0">
+    <MaterialMapping id="BaseCharacterMaterial" path="Content/Models/BaseCharacter/BaseCharacter_Material.asset" />
+</Mesh>
