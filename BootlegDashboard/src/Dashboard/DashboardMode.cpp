@@ -25,6 +25,7 @@
 
 #include <KIT/Rendering/SpriteRenderer.hpp>
 #include <KIT/Game/Components/StaticMeshComponent.hpp>
+#include <KIT/Game/Components/SkeletalMeshComponent.hpp>
 #include <KIT/Game/Components/CameraComponent.hpp>
 
 #include <WIR/String.hpp>
@@ -174,14 +175,25 @@ void bootleg::DashboardMode::onModeActivated()
   */
 
   auto obj = world()->spawnObject("CartoonMesh");
-  for (uint32_t i = 0; i < 1; i++)
+  for (uint32_t i = 0; i < 2; i++)
   {
     auto mesh = assetManager()->loadSync<kit::Mesh>(wir::format("Content/Models/CartoonKnight/CartoonKnight_%u.asset", i));
-    auto comp = obj->spawnComponent<kit::StaticMeshComponent>(wir::format("MilitaryRadioMesh_%u", i));
+    if (mesh->boneIndex().size() == 0)
+    {
+      auto comp = obj->spawnComponent<kit::StaticMeshComponent>(wir::format("CartoonKnightMesh_%u", i));
+      comp->mesh(mesh);
+      comp->attach(obj);
+    }
+    else 
+    {
+      auto skel = assetManager()->loadSync<kit::Skeleton>("Content/Models/CartoonKnight/Skeleton_CartoonKnight.asset");
+      auto comp = obj->spawnComponent<kit::SkeletalMeshComponent>(wir::format("CartoonKnightSkeletalMesh_%u", i));
+      comp->mesh(mesh);
+      comp->skeleton(skel);
+      comp->attach(obj);
+      comp->applyInitialPose();
+    }
    
-    comp->mesh(mesh);
-
-    comp->attach(obj);
   }
   obj->translate(glm::vec3(0.0f, 0.5f, 0.0f));
 

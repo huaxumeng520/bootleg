@@ -1,4 +1,4 @@
-<Mesh SourceFile="CartoonKnight.fbx" Index16="1" Normal="1" Tangent="0" Bones="0" TexCoord1="1" TexCoord2="0" TexCoord3="0" TexCoord4="0">
+<Mesh SourceFile="CartoonKnight.fbx" Index16="1" Normal="1" Tangent="0" Bones="1" TexCoord1="1" TexCoord2="0" TexCoord3="0" TexCoord4="0">
 
     <MaterialMapping id="Body" path="Content/Models/CartoonKnight/CartoonKnight_BodyMaterial.asset" />
     <MaterialMapping id="Sword" path="Content/Models/CartoonKnight/CartoonKnight_SwordMaterial.asset" />
