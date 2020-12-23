@@ -27,6 +27,7 @@
 #include <KIT/Game/Components/StaticMeshComponent.hpp>
 #include <KIT/Game/Components/SkeletalMeshComponent.hpp>
 #include <KIT/Game/Components/CameraComponent.hpp>
+#include <KIT/Renderer/RenderScenes/BootlegScene.hpp>
 
 #include <WIR/String.hpp>
 
@@ -220,6 +221,8 @@ void bootleg::DashboardMode::onModeActivated()
   ::mesh->mesh(charm);
   ::mesh->skeleton(chars);
   ::mesh->attach(obj);
+
+  ::running->rootMotion(true, "Root");
   //::mesh->applyInitialPose();
    
   obj->translate(glm::vec3(0.0f, 1.0f, 0.0f));
@@ -234,6 +237,16 @@ void bootleg::DashboardMode::onModeActivated()
   ::camera = cmObj;
 
   world()->start();
+
+  auto scene = renderManager()->renderer()->renderScene()->cast<kit::BootlegScene>();
+  if (!scene)
+    return;
+
+  scene->indirectLight(glm::vec3(0.7f, 0.8f, 1.0f) * 0.3f);
+  scene->directLight(glm::vec3(1.0f, 0.8f, 0.7f) * 1.3f);
+  scene->lightHardness(4.0f);
+  scene->fresnelIntensity(1.5f);
+  scene->fresnelHardness(2.25f);
 
 }
 
@@ -376,8 +389,8 @@ void bootleg::DashboardMode::update(double seconds)
   ::idle->update(seconds);
   ::running->update(seconds);
 
-  ::mesh->applyInitialPose();
-  ::mesh->applyAnimation(::idle);
+  //::mesh->applyInitialPose();
+  ::mesh->applyAnimation(::running);
 }
 
 void bootleg::DashboardMode::handleNavigateHorizontal(float delta)
@@ -424,10 +437,20 @@ void bootleg::DashboardMode::handleNavigateDown()
 
 void bootleg::DashboardMode::handleNavigateLeft()
 {
+  auto scene = renderManager()->renderer()->renderScene()->cast<kit::BootlegScene>();
+  if (!scene)
+    return;
+
+  scene->fresnelHardness(scene->fresnelHardness() - 0.1f);
 }
 
 void bootleg::DashboardMode::handleNavigateRight()
 {
+  auto scene = renderManager()->renderer()->renderScene()->cast<kit::BootlegScene>();
+  if (!scene)
+    return;
+
+  scene->fresnelHardness(scene->fresnelHardness() + 0.1f);
 }
 
 void bootleg::DashboardMode::handleNavigateUp()

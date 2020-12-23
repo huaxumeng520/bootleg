@@ -1,3 +1,0 @@
-<Material class="kit::BootlegMaterial">
-    <Texture name="Albedo" path="Content/Models/CartoonKnight/CartoonKnight_BodyAlbedo.asset" />
-</Material>
