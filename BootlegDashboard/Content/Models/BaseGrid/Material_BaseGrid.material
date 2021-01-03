@@ -1,0 +1,5 @@
+<Material class="kit::BootlegMaterial">
+    <Texture name="Albedo" path="Content/Textures/GrassAlbedo_256.asset" />
+    <Boolean name="Lighting" value="1" />
+    <Boolean name="Fresnel" value="0" />
+</Material>

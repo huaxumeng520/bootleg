@@ -1,0 +1,3 @@
+<Mesh SourceFile="BaseGrid.fbx" Index16="1" Normal="1" Tangent="0" Bones="0" TexCoord1="1" TexCoord2="0" TexCoord3="0" TexCoord4="0">
+    <MaterialMapping id="BaseGridMaterial" path="Content/Models/BaseGrid/Material_BaseGrid.asset" />
+</Mesh>

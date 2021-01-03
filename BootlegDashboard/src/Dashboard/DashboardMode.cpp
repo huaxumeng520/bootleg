@@ -19,7 +19,7 @@
 
 #include <KIT/Game/Object.hpp>
 #include <KIT/Game/World.hpp>
-
+#include <KIT/Game/RigidCharacter.hpp>
 #include <KIT/Game/PlayerState.hpp>
 
 
@@ -27,6 +27,8 @@
 #include <KIT/Game/Components/StaticMeshComponent.hpp>
 #include <KIT/Game/Components/SkeletalMeshComponent.hpp>
 #include <KIT/Game/Components/CameraComponent.hpp>
+#include <KIT/Game/Components/PhysicsMeshComponent.hpp>
+
 #include <KIT/Renderer/RenderScenes/BootlegScene.hpp>
 
 #include <WIR/String.hpp>
@@ -36,7 +38,8 @@
 
 namespace 
 {
-
+  kit::RigidCharacter *rigidCharacter = nullptr;
+  kit::Object *character = nullptr;
   kit::Object *display = nullptr;
   kit::Transformable *camera = nullptr;
   kit::AnimationComponent *idle = nullptr;
@@ -77,6 +80,12 @@ void bootleg::DashboardMode::onModeActivated()
 
   // Bind inputs to events
 
+  m_playerState->bindButton("MoveForward", "w", wir::BT_AsAxisPositive);
+  m_playerState->bindButton("MoveForward", "s", wir::BT_AsAxisNegative);
+  m_playerState->bindButton("MoveRight", "d", wir::BT_AsAxisPositive);
+  m_playerState->bindButton("MoveRight", "a", wir::BT_AsAxisNegative);
+  m_playerState->bindButton("Jump", "space", wir::BT_Down);
+
   m_playerState->bindAxis("MouseHorizontal", "ma_x", wir::AT_Normal);
   m_playerState->bindAxis("MouseVertical", "ma_y", wir::AT_Normal);
 
@@ -96,6 +105,19 @@ void bootleg::DashboardMode::onModeActivated()
   m_playerState->bindButton("Back", "gamepad_b", wir::BT_AsAxisNegative);
   
   // Bind events to functions
+
+  m_playerState->getAxisEvent("MoveRight") += [&](float delta) {
+    ::rigidCharacter->move(::camera->right() * delta * float(engine()->lastDelta()) * 1000.0f);
+  };
+
+  m_playerState->getAxisEvent("MoveForward") += [&](float delta) {
+    ::rigidCharacter->move(::camera->forward() * delta * float(engine()->lastDelta()) * 1000.0f);
+  };
+
+  m_playerState->getButtonEvent("Jump") += [&]() {
+    ::rigidCharacter->jump(-5.0f);
+  };
+
   m_playerState->getAxisEvent("MouseHorizontal") += [](float delta) {
     ::cameraX += delta;
   };
@@ -203,31 +225,47 @@ void bootleg::DashboardMode::onModeActivated()
     obj->translate(glm::vec3(0.0f, 0.5f, 0.0f));
   */
 
+  auto scObj = world()->spawnObject("BaseGrid");
+  auto scm = assetManager()->loadSync<kit::Mesh>("Content/Models/BaseGrid/Mesh_BaseGrid.asset");
+  auto scp = assetManager()->loadSync<kit::PhysicsMesh>("Content/Models/BaseGrid/PhysicsMesh_BaseGrid.asset");
 
-  auto obj = world()->spawnObject("BaseCharacter");
-  auto charm = assetManager()->loadSync<kit::Mesh>("Content/Models/BaseCharacter/BaseCharacter.asset");
+  auto scMesh = scObj->spawnComponent<kit::StaticMeshComponent>("BaseGridMesh");
+  scMesh->mesh(scm);
+  scMesh->attach(scObj);
+
+  auto scPhys = scObj->spawnComponent<kit::RigidPhysicsMeshComponent>("BaseGridPhysics");
+  scPhys->mass(0.0f);
+  scPhys->mesh(scp);
+
+
+  ::rigidCharacter = world()->spawnObject<kit::RigidCharacter>("BaseCharacter");
+  ::character = ::rigidCharacter;
+  ::character->translate(glm::vec3(0.0f, -20.0f, 0.0f));
+  
+
+  auto charm = assetManager()->loadSync<kit::Mesh>("Content/Models/BaseCharacter/Mesh_BaseCharacter.asset");
   auto chars = assetManager()->loadSync<kit::Skeleton>("Content/Models/BaseCharacter/Skeleton_BaseCharacter.asset");
   ::idleAnim = assetManager()->loadSync<kit::Animation>("Content/Models/BaseCharacter/Animation_BaseCharacter_Idle.asset");
-  ::idle = obj->spawnComponent<kit::AnimationComponent>("IdleAnim");
+  ::idle = ::character->spawnComponent<kit::AnimationComponent>("IdleAnim");
   ::idle->animation(::idleAnim);
   ::idle->play();
 
   ::runningAnim = assetManager()->loadSync<kit::Animation>("Content/Models/BaseCharacter/Animation_BaseCharacter_Running.asset");
-  ::running = obj->spawnComponent<kit::AnimationComponent>("RunningAnim");
+  ::running = ::character->spawnComponent<kit::AnimationComponent>("RunningAnim");
   ::running->animation(::runningAnim);
   ::running->play();
 
-  ::mesh = obj->spawnComponent<kit::SkeletalMeshComponent>("BaseCharacterMesh");
+  ::mesh = ::character->spawnComponent<kit::SkeletalMeshComponent>("BaseCharacterMesh");
   ::mesh->mesh(charm);
   ::mesh->skeleton(chars);
-  ::mesh->attach(obj);
+  ::mesh->attach(::character);
+  ::mesh->translate(glm::vec3(0.0f, 1.75f / 2.0f, 0.0f));
 
   ::running->rootMotion(true, "Root");
   //::mesh->applyInitialPose();
    
-  obj->translate(glm::vec3(0.0f, 1.0f, 0.0f));
 
-  ::display = obj;
+  ::display = ::character;
 
   auto cmObj = world()->spawnObject("Camera");
   auto cm = cmObj->spawnComponent<kit::CameraComponent>("CameraComponent");
@@ -242,11 +280,11 @@ void bootleg::DashboardMode::onModeActivated()
   if (!scene)
     return;
 
-  scene->indirectLight(glm::vec3(0.7f, 0.8f, 1.0f) * 0.3f);
-  scene->directLight(glm::vec3(1.0f, 0.8f, 0.7f) * 1.3f);
+  scene->indirectLight(glm::vec3(0.7f, 0.8f, 1.0f) * 0.6f);
+  scene->directLight(glm::vec3(1.0f, 0.8f, 0.7f) * 1.25f);
   scene->lightHardness(4.0f);
   scene->fresnelIntensity(1.5f);
-  scene->fresnelHardness(2.25f);
+  scene->fresnelHardness(1.85f);
 
 }
 
@@ -333,7 +371,7 @@ void bootleg::DashboardMode::update(double seconds)
 
   glm::quat rotation = glm::rotate(glm::quat(), glm::radians(::cameraX * 0.5f), glm::vec3(0.0f, 1.0f, 0.0f));
   rotation = glm::rotate(rotation, glm::radians(::cameraY * -0.5f), glm::vec3(1.0f, 0.0f, 0.0f));
-  glm::vec3 position = rotation * kit::Transformable::forward() * -2.0f;
+  glm::vec3 position = ::character->worldPosition() + (rotation * kit::Transformable::forward() * -2.0f);
   
    ::camera->localRotation(rotation);
   ::camera->localPosition(position);
